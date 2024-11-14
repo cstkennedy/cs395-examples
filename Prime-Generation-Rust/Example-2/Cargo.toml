@@ -1,0 +1,16 @@
+[package]
+name = "rust-prime-generation"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name="rust_prime_generation"
+crate-type = ["cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dependencies.pyo3]
+version = "0.22.1"
+features = ["extension-module"]
