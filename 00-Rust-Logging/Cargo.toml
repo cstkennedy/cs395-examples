@@ -1,0 +1,10 @@
+[package]
+name = "log_test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+eyre = "0.6.12"
+fern = { version = "0.7", features = ["colored"] }
+humantime = "2.1.0"
+log = "0.4.22"
