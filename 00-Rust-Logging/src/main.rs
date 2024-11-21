@@ -39,10 +39,10 @@ fn set_up_logging(global_level: log::LevelFilter) -> Result<(), fern::InitError>
 }
 
 fn main() -> eyre::Result<()>{
-    set_up_logging(log::LevelFilter::Warn).wrap_err("Logging set up failed")?;
+    set_up_logging(log::LevelFilter::Info).wrap_err("Logging set up failed")?;
 
     info!("starting simulation!");
-    for i in 0..26 {
+    for i in 0..=100 {
         trace!("loading: {}%, very verbose debbuging information", 4 * i);
 
         match i {
@@ -52,14 +52,14 @@ fn main() -> eyre::Result<()>{
             10 => {
                 debug!("still alive! yay!");
             }
-            13 => {
+            15 => {
                 info!("halfway there!");
             }
-            16 => {
+            20 => {
                 debug!("*scratches nose*");
                 warn!("nose is itching, continuing anyways");
             }
-            20 => {
+            50 => {
                 debug!("uh oh");
                 warn!(">nose itching intensifies");
                 error!("HATCHOOO!");
@@ -67,14 +67,14 @@ fn main() -> eyre::Result<()>{
                 info!("gesundheit");
                 debug!("recovered from minor problem, continuing");
             }
-            25 => {
+            100 => {
                 info!("successfully loaded nothing");
                 info!("have a good time!");
             }
             _ => {}
         }
 
-        thread::sleep(time::Duration::from_millis(250));
+        thread::sleep(time::Duration::from_millis(100));
     }
 
     Ok(())
