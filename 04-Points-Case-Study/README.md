@@ -2,7 +2,7 @@ This example sequence will focus on a `Point` example at various stages of
 design/development.
 
 
-#  mple
+# Example 1
 
 
 This example focuses on the start of a Point library. The foci will include:
@@ -47,7 +47,7 @@ This example focuses on the start of a Point library. The foci will include:
     }
     ```
 
-Example 2
+# Example 2
 
 This example focuses on the refinement of a Point library. The foci will include:
 
@@ -91,6 +91,7 @@ This example focuses on the refinement of a Point library. The foci will include
         }
     }
     ```
+
 
 # Example 3
 
