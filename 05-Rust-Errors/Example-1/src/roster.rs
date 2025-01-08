@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::student::Student;
 
-const DEFAULT_MAX_STUDENTS: usize = 10;
+pub const DEFAULT_MAX_STUDENTS: usize = 10;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Roster<'a> {
