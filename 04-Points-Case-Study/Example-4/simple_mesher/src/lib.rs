@@ -16,7 +16,7 @@ impl Triangle {
     }
 }
 
-pub fn square_to_triangles(square: &[Point2D<f64>]) -> (Triangle, Triangle) {
+pub fn square_to_triangles(square: &[Point2D<f64>; 4]) -> (Triangle, Triangle) {
     let tri_1 = Triangle {
         vertex_0: square[0],
         vertex_1: square[1],
