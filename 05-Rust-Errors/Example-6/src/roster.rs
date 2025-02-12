@@ -34,11 +34,13 @@ impl Roster {
 
     pub fn enroll<'a>(&'a mut self, stu: Student) -> Result<(), RosterError<'a>> {
         if self.students.len() == self.enroll_limit {
-            return Err(RosterError{ the_error: EnrollError::SectionFull {
-                course_num: &self.course_num,
-                cap: self.enroll_limit,
-            },
-                the_value: stu});
+            return Err(RosterError{
+                the_error: EnrollError::SectionFull {
+                    course_num: &self.course_num,
+                    cap: self.enroll_limit,
+                },
+                the_value: stu
+            });
         }
 
         if self.students.contains(&stu) {
