@@ -38,6 +38,14 @@ This discussion is split into six (6) examples:
   - **Example 6**
     - Finishing `main`
 
+  - **Example 7**
+    - Finishing `main` again
+
+  - **Example 8**
+    - Using clap
+    - Fixing traits
+    - Removing `unwrap`
+
 
 
 
