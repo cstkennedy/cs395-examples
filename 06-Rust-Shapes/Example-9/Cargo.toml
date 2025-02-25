@@ -11,5 +11,12 @@ eyre = "0.6.12"
 clap = { version = "4.5.29", features = ["derive"] }
 
 [dev-dependencies]
+criterion = "0.5.1"
 hamcrest2 = "*"
 stringreader = "0.1.1"
+
+
+[[bench]]
+name = "bench_factory"
+harness = false
+
