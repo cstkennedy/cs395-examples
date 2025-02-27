@@ -1,5 +1,5 @@
 [package]
-name = "rust-prime-generation"
+name = "prime_generation"
 version = "0.1.0"
 edition = "2021"
 
