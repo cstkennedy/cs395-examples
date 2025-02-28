@@ -10,7 +10,8 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+prime_generation = { path = "../prime_generation" }
 
 [dependencies.pyo3]
-version = "0.22.1"
+version = "0.23.5"
 features = ["extension-module"]

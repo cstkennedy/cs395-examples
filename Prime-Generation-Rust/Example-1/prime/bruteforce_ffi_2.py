@@ -1,25 +1,9 @@
-from __future__ import annotations
-
 import math
 from itertools import takewhile
 from typing import Generator
 
-from rust_prime_generation import can_be_divided_by_any, compute_next
+from rust_prime_generation import compute_next
 
-"""
-def compute_next(known_primes) -> int:
-
-    next_prime = known_primes[-1]
-
-    # true once a prime number has been identified
-    is_prime = False
-
-    # Halt when a prime number has been identified
-    while not is_prime:
-        # Guess the next prime
-        next_prime += 2
-        is_prime = not can_be_divided_by_any(known_primes, next_prime)
-"""
 
 def generate_primes(to_generate: int) -> Generator[int, None, None]:
     """
