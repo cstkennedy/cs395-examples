@@ -1,20 +1,8 @@
 use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq)]
-pub enum BuildError {
-    #[error("{0:?}")]
-    InvalidDim(&'static str),
-
-    #[error("A house must have at least 1 room")]
-    ZeroRooms,
-
-    #[error("{0:?}")]
-    GenericError(&'static str),
-}
-
-#[derive(Debug, Error, PartialEq)]
 pub enum ParseError {
-    #[error("{0}")]
+    #[error("'{0}' is malformed")]
     MalformedLine(String),
 }
 
@@ -34,6 +22,12 @@ pub enum RoomError {
 
     #[error("{0:?}")]
     ParseError(#[from] ParseError),
+}
+
+#[derive(Debug, Error, PartialEq)]
+pub enum HouseError {
+    #[error("A house must have at least 1 room")]
+    ZeroRooms,
 }
 
 #[derive(Debug, Error, PartialEq)]
@@ -63,9 +57,16 @@ where
 }
 
 pub type RoomErrorWithState<S> = BuildErrorWithState<RoomError, S>;
+pub type HouseErrorWithState<S> = BuildErrorWithState<HouseError, S>;
 
 impl<S> From<RoomErrorWithState<S>> for RoomError {
     fn from(source_with_state: RoomErrorWithState<S>) -> Self {
+        source_with_state.the_error
+    }
+}
+
+impl<S> From<HouseErrorWithState<S>> for HouseError {
+    fn from(source_with_state: HouseErrorWithState<S>) -> Self {
         source_with_state.the_error
     }
 }

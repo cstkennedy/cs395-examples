@@ -11,6 +11,7 @@ ordered-float = "4.2.0"
 itertools = "*"
 typed-builder = "0.18.1"
 thiserror = "2.0.0"
+eyre = "0.6.12"
 
 [dev-dependencies]
 hamcrest2 = "*"

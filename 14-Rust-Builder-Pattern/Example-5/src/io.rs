@@ -19,19 +19,19 @@ impl FromStr for Room {
     fn from_str(line: &str) -> Result<Self, Self::Err> {
         // Separate the name and "the rest"
         let (name, the_rest) = {
-            let line = line.split(";").collect::<Vec<&str>>();
+            let tokens = line.split(";").collect::<Vec<&str>>();
 
-            // Grab the name first
-            let name = line[0];
-            // Split everything else by whitespace
-            let the_rest: Vec<&str> = line[1].split_whitespace().collect();
+            // 1. Grab the name
+            // 2. Split everything else by whitespace
+            let name = tokens[0];
+            let the_rest: Vec<&str> = tokens[1].split_whitespace().collect();
+
+            if the_rest.len() < MIN_NUM_ROOM_TOKENS {
+                return Err(ParseError::MalformedLine(line.to_owned()).into());
+            }
 
             (name, the_rest)
         };
-
-        if the_rest.len() < MIN_NUM_ROOM_TOKENS {
-            return Err(ParseError::MalformedLine(line.to_owned()).into());
-        }
 
         // Separate the flooring type and length, width, and flooring cost
         let (length, width, flooring_name, unit_cost) = {
@@ -70,21 +70,25 @@ impl FromStr for Room {
     }
 }
 
-pub fn read_house_from_str(room_data: &str) -> Option<House> {
-    let parsed_rooms: Vec<Room> = room_data
-        .lines()
-        .filter(|line| !line.is_empty())
-        .filter(|line| line.contains(";"))
-        // .flat_map(|line| Room::from_str(line))
-        .flat_map(Room::from_str)
-        // .flat_map(|line| line.parse::<Room>())
-        .collect();
+pub struct HouseParser;
 
-    match House::builder().with_rooms(parsed_rooms) {
-        Ok(builder) => {
-            let house = builder.build();
-            Some(house)
+impl HouseParser {
+    pub fn read_house_from_str(room_data: &str) -> Option<House> {
+        let parsed_rooms: Vec<Room> = room_data
+            .lines()
+            .filter(|line| !line.is_empty())
+            .filter(|line| line.contains(";"))
+            // .flat_map(|line| Room::from_str(line))
+            .flat_map(Room::from_str)
+            // .flat_map(|line| line.parse::<Room>())
+            .collect();
+
+        match House::builder().with_rooms(parsed_rooms) {
+            Ok(builder) => {
+                let house = builder.build();
+                Some(house)
+            }
+            Err(_) => None,
         }
-        Err(_) => None,
     }
 }

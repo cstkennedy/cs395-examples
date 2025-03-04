@@ -1,9 +1,8 @@
-use crate::error::*;
-use crate::room::*;
-use std::fmt;
-use std::fmt::Display;
-use std::vec::Vec; // ,Formatter,Result};
-                   // use std::cmp::Ordering;
+use std::fmt::{self, Display, Formatter};
+use std::vec::Vec;
+
+use crate::error::{HouseError, HouseErrorWithState};
+use crate::room::Room;
 
 type Collection = Vec<Room>;
 
@@ -20,7 +19,7 @@ impl House {
 
     /// Get the name using a traditional accessor.
     ///
-    pub fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &str {
         &self.name
     }
 
@@ -63,7 +62,7 @@ impl Display for House {
     ///   - `toString` in Java
     ///   - `__str__` in Python
     ///
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         writeln!(f, "--------{}--------\n", self.name)?;
 
         for room in self.rooms.iter() {
@@ -144,10 +143,10 @@ impl HouseBuilder<NoRooms> {
     pub fn with_rooms(
         self,
         first_rooms: Vec<Room>,
-    ) -> Result<HouseBuilder<Vec<Room>>, BuildErrorWithState<BuildError, Self>> {
+    ) -> Result<HouseBuilder<Vec<Room>>, HouseErrorWithState<Self>> {
         match first_rooms.len() {
-            0 => Err(BuildErrorWithState {
-                the_error: BuildError::ZeroRooms,
+            0 => Err(HouseErrorWithState {
+                the_error: HouseError::ZeroRooms,
                 the_builder: self,
             }),
             _ => Ok(HouseBuilder {

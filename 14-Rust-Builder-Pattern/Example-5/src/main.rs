@@ -7,10 +7,10 @@ use std::iter::Sum;
 // use std::env;
 use std::vec::Vec;
 
-use room_renovation::flooring::Flooring;
-use room_renovation::house::House;
-use room_renovation::io::read_house_from_str;
-use room_renovation::room::Room;
+use eyre::{self, OptionExt, Result, WrapErr};
+
+use room_renovation::error::HouseError;
+use room_renovation::prelude::*;
 
 const ROOM_DATA: &str = r#"
 Laundry Room; 8 4 1.95 Laminate
@@ -27,11 +27,12 @@ Storage Room; 16 16 4.39 Birch Wood
 /// We will use these when we implement the iterator interface.
 ///
 #[cfg(not(tarpaulin_include))]
-fn main() {
-    let house =
-        read_house_from_str(ROOM_DATA).expect("Input did not contain at least one valid room line");
-    let duplicate_house =
-        upgrade_flooring(&house).expect("Reference 'house' was invalid (THIS SHOULD NEVER HAPPEN)");
+fn main() -> eyre::Result<()> {
+    let house = HouseParser::read_house_from_str(ROOM_DATA)
+        .ok_or_eyre("Input did not contain at least one valid room line")?;
+
+    let duplicate_house = upgrade_flooring(&house)
+        .wrap_err("Reference 'house' was invalid (THIS SHOULD NEVER HAPPEN)")?;
 
     println!("{house}");
     println!("{duplicate_house}");
@@ -57,6 +58,8 @@ fn main() {
     }
 
     println!();
+
+    Ok(())
 }
 
 ///
@@ -70,28 +73,30 @@ fn main() {
 ///
 /// House with the updated flooring
 ///
-fn upgrade_flooring(original: &House) -> Option<House> {
+#[rustfmt::skip]
+fn upgrade_flooring(original: &House) -> Result<House, HouseError> {
     let new_flooring = Flooring::builder()
         .type_name("Stone Bricks".into())
         .unit_cost(12.97)
         .build();
 
-    let bldr = House::builder().with_name("After Stone Bricks").with_rooms(
-        original
-            .iter()
-            .map(|room| {
-                Room::builder()
-                    .from_existing(room)
-                    .with_flooring(new_flooring.clone())
-                    .build()
-            })
-            .collect::<Vec<Room>>(),
-    );
+    let house = House::builder()
+        .with_name("After Stone Bricks")
+        .with_rooms(
+            original
+                .iter()
+                .map(|room| {
+                    Room::builder()
+                        .from_existing(room)
+                        .with_flooring(new_flooring.clone())
+                        .build()
+                })
+                .collect::<Vec<Room>>(),
+        )?
+        .build();
 
-    match bldr {
-        Ok(bldr) => Some(bldr.build()),
-        Err(_) => None,
-    }
+    Ok(house)
+
 }
 
 ///
