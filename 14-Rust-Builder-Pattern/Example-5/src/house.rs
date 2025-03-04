@@ -144,7 +144,7 @@ impl HouseBuilder<NoRooms> {
     pub fn with_rooms(
         self,
         first_rooms: Vec<Room>,
-    ) -> Result<HouseBuilder<Vec<Room>>, BuildErrorWithState<Self>> {
+    ) -> Result<HouseBuilder<Vec<Room>>, BuildErrorWithState<BuildError, Self>> {
         match first_rooms.len() {
             0 => Err(BuildErrorWithState {
                 the_error: BuildError::ZeroRooms,

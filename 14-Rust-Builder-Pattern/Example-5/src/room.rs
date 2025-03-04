@@ -154,18 +154,18 @@ impl RoomBuilder<String, NoDimensions, NoFlooring> {
         self,
         length: f64,
         width: f64,
-    ) -> Result<RoomBuilder<String, f64, NoFlooring>, BuildErrorWithState<Self>> {
+    ) -> Result<RoomBuilder<String, f64, NoFlooring>, RoomErrorWithState<Self>> {
         match (length > 0.0, width > 0.0) {
-            (false, false) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'length' and 'width' must be > 0"),
+            (false, false) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidDimensions(0.0),
                 the_builder: self,
             }),
-            (false, true) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'length' must be > 0"),
+            (false, true) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidLength(0.0),
                 the_builder: self,
             }),
-            (true, false) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'width' must be > 0"),
+            (true, false) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidWidth(0.0),
                 the_builder: self,
             }),
             (true, true) => Ok(RoomBuilder {
@@ -194,18 +194,18 @@ impl RoomBuilder<String, f64, Flooring> {
         mut self,
         length: f64,
         width: f64,
-    ) -> Result<Self, BuildErrorWithState<Self>> {
+    ) -> Result<Self, RoomErrorWithState<Self>> {
         match (length > 0.0, width > 0.0) {
-            (false, false) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'length' and 'width' must be > 0"),
+            (false, false) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidDimensions(0.0),
                 the_builder: self,
             }),
-            (false, true) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'length' must be > 0"),
+            (false, true) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidLength(0.0),
                 the_builder: self,
             }),
-            (true, false) => Err(BuildErrorWithState {
-                the_error: BuildError::InvalidDim("'width' must be > 0"),
+            (true, false) => Err(RoomErrorWithState {
+                the_error: RoomError::InvalidWidth(0.0),
                 the_builder: self,
             }),
             (true, true) => {

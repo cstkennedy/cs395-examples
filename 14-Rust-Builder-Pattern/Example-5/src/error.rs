@@ -13,23 +13,59 @@ pub enum BuildError {
 }
 
 #[derive(Debug, Error, PartialEq)]
-pub struct BuildErrorWithState<B> {
-    #[source]
-    pub the_error: BuildError,
-    pub the_builder: B,
+pub enum ParseError {
+    #[error("{0}")]
+    MalformedLine(String),
 }
 
 #[derive(Debug, Error, PartialEq)]
-pub enum RoomParseError {
-    #[error("{0:?}")]
-    InvalidDim(&'static str),
+pub enum RoomError {
+    #[error("'length' and 'width' must be > {0}")]
+    InvalidDimensions(f64),
+
+    #[error("'length' must be > {0}")]
+    InvalidLength(f64),
+
+    #[error("'width' must be > {0}")]
+    InvalidWidth(f64),
+
+    #[error("'unit cost' must be > {0}")]
+    InvalidCost(f64),
 
     #[error("{0:?}")]
-    GenericError(&'static str),
+    ParseError(#[from] ParseError),
 }
 
-impl<B> From<BuildErrorWithState<B>> for RoomParseError {
-    fn from(source: BuildErrorWithState<B>) -> Self {
-        RoomParseError::GenericError("TODO")
+#[derive(Debug, Error, PartialEq)]
+pub struct ErrorWithState<E: std::error::Error, S> {
+    #[source]
+    pub the_error: E,
+    pub the_state: S,
+}
+
+#[derive(Debug, Error, PartialEq)]
+pub struct BuildErrorWithState<E: std::error::Error, B> {
+    #[source]
+    pub the_error: E,
+    pub the_builder: B,
+}
+
+impl<E, S> From<ErrorWithState<E, S>> for BuildErrorWithState<E, S>
+where
+    E: std::error::Error,
+{
+    fn from(source: ErrorWithState<E, S>) -> Self {
+        BuildErrorWithState {
+            the_error: source.the_error,
+            the_builder: source.the_state,
+        }
+    }
+}
+
+pub type RoomErrorWithState<S> = BuildErrorWithState<RoomError, S>;
+
+impl<S> From<RoomErrorWithState<S>> for RoomError {
+    fn from(source_with_state: RoomErrorWithState<S>) -> Self {
+        source_with_state.the_error
     }
 }
