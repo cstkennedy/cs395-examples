@@ -1,0 +1,90 @@
+use std::vec::Vec;
+use std::str::FromStr;
+
+use itertools::Itertools;
+
+use crate::flooring::Flooring;
+use crate::house::House;
+use crate::room::Room;
+use crate::error;
+
+
+const MIN_LINEAR_DIM: f64 = 0.0_f64;
+const MIN_COST: f64 = 0.01_f64;
+const MIN_NUM_ROOM_TOKENS: usize = 4;
+const REQUIRED_NUM_DIMS: usize = 3;
+
+impl FromStr for Room {
+    type Err = error::RoomParseError;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+            let raw_line = line;
+
+            // Separate the name and "the rest"
+            let (name, the_rest) = {
+                let line = line.split(";").collect::<Vec<&str>>();
+
+                // Grab the name first
+                let name = line[0];
+                // Split everything else by whitespace
+                let the_rest: Vec<&str> = line[1].split_whitespace().collect();
+
+                (name, the_rest)
+            };
+
+            if the_rest.len() < MIN_NUM_ROOM_TOKENS {
+                return Err(error::RoomParseError::GenericError("Invalid line"));
+            }
+
+            // Separate the flooring type and length, width, and flooring cost
+            let (length, width, flooring_name, unit_cost) = {
+                let nums: Vec<f64> = the_rest[0..3]
+                    .iter()
+                    .flat_map(|token| token.parse())
+                    .collect();
+
+                if nums.len() < REQUIRED_NUM_DIMS {
+                    return Err(error::RoomParseError::GenericError("Invalid line"));
+                }
+
+                // The flooring name might contain spaces.
+                // Combine the remainder of the line.
+                let flooring_name = the_rest.into_iter().skip(3).join(" ");
+
+                (nums[0], nums[1], flooring_name, nums[2])
+            };
+
+            let room = Room::builder()
+                .with_name(name)
+                .with_dimensions(length, width)?
+                .with_flooring(
+                    Flooring::builder()
+                        .type_name(flooring_name)
+                        .unit_cost(unit_cost)
+                        .build(),
+                )
+                .build();
+
+            Ok(room)
+    }
+
+}
+
+pub fn read_house_from_str(room_data: &str) -> Option<House> {
+    let parsed_rooms: Vec<Room> = room_data
+        .lines()
+        .filter(|line| !line.is_empty())
+        .filter(|line| line.contains(";"))
+        // .flat_map(|line| Room::from_str(line))
+        .flat_map(Room::from_str)
+        // .flat_map(|line| line.parse::<Room>())
+        .collect();
+
+    match House::builder().with_rooms(parsed_rooms) {
+        Ok(builder) => {
+            let house = builder.build();
+            Some(house)
+        }
+        Err(_) => None,
+    }
+}
