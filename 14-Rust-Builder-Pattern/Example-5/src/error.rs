@@ -2,6 +2,12 @@ use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq)]
 pub enum ParseError {
+    #[error("Missing '{delim}' in '{line}'")]
+    MissingDelimiter { delim: String, line: String },
+
+    #[error("'{line}' is malformed - only '{num_tokens} tokens'")]
+    TooFewTokens { num_tokens: usize, line: String },
+
     #[error("'{0}' is malformed")]
     MalformedLine(String),
 }

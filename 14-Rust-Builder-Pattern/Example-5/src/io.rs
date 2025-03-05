@@ -1,9 +1,8 @@
 use std::str::FromStr;
-use std::vec::Vec;
 
 use itertools::Itertools;
 
-use crate::error::{ParseError, RoomError};
+use crate::error::{HouseError, ParseError, RoomError};
 use crate::flooring::Flooring;
 use crate::house::House;
 use crate::room::Room;
@@ -21,13 +20,25 @@ impl FromStr for Room {
         let (name, the_rest) = {
             let tokens = line.split(";").collect::<Vec<&str>>();
 
+            if tokens.len() < 2 {
+                return Err(ParseError::MissingDelimiter {
+                    delim: ";".into(),
+                    line: line.to_owned(),
+                }
+                .into());
+            }
+
             // 1. Grab the name
             // 2. Split everything else by whitespace
             let name = tokens[0];
             let the_rest: Vec<&str> = tokens[1].split_whitespace().collect();
 
             if the_rest.len() < MIN_NUM_ROOM_TOKENS {
-                return Err(ParseError::MalformedLine(line.to_owned()).into());
+                return Err(ParseError::TooFewTokens {
+                    num_tokens: the_rest.len(),
+                    line: line.to_owned(),
+                }
+                .into());
             }
 
             (name, the_rest)
@@ -73,7 +84,8 @@ impl FromStr for Room {
 pub struct HouseParser;
 
 impl HouseParser {
-    pub fn read_house_from_str(room_data: &str) -> Option<House> {
+    pub fn read_house_from_str(room_data: &str) -> Result<House, HouseError> {
+        /*
         let parsed_rooms: Vec<Room> = room_data
             .lines()
             .filter(|line| !line.is_empty())
@@ -90,5 +102,17 @@ impl HouseParser {
             }
             Err(_) => None,
         }
+        */
+        let house = House::builder()
+            .with_rooms(
+                room_data
+                    .lines()
+                    .filter(|line| !line.is_empty())
+                    .flat_map(Room::from_str)
+                    .collect(),
+            )?
+            .build();
+
+        Ok(house)
     }
 }

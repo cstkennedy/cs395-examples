@@ -1,4 +1,3 @@
-#[cfg(test)]
 use room_renovation::flooring::*;
 use room_renovation::house::*;
 use room_renovation::room::*;

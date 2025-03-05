@@ -1,87 +1,69 @@
-#[cfg(test)]
-#[macro_use]
 use room_renovation::flooring::*;
 use room_renovation::house::*;
 use room_renovation::io::HouseParser;
 use room_renovation::room::*;
 
 use hamcrest2::prelude::*;
+use rstest::rstest;
 
-#[test]
+#[rstest]
 fn test_empty_string() {
     let house = HouseParser::read_house_from_str("");
 
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 }
 
-#[test]
+#[rstest]
 fn test_blank_string_white_space() {
     let house = HouseParser::read_house_from_str(" ");
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 
     let house = HouseParser::read_house_from_str(" \t ");
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 
     let line = [" ", " \t   ", "    \t\t", "\t"].join("\n");
     let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 }
 
-#[test]
+#[rstest]
 fn test_malformed_lines_only_name() {
     let line = "Kitchen";
     let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 
     let lines = ["Kitchen", "", " Storage    "].join(";\n");
     let house = HouseParser::read_house_from_str(&lines);
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 }
 
-#[test]
-fn test_malformed_lines_missing_tokens() {
-    let line = ["", "4", "5", "7.5", "Vinyl Plank"].join(" ");
+#[rstest]
+#[case::missing_name(["", "4", "5", "7.5", "Vinyl Plank"])]
+#[case::missing_length(["Kitchen;", "", "5", "7.5", "Vinyl Plank"])]
+#[case::missing_width(["Kitchen;", "4", "", "7.5", "Vinyl Plank"])]
+#[case::missing_cost(["Kitchen;", "4", "5", "", "Vinyl Plank"])]
+#[case::missing_type(["Kitchen;", "4", "5", "7.5", ""])]
+#[case(["Kitchen;", "", "5", "", "Vinyl Plank"])]
+#[case(["", "4", "5", "7.5", ""])]
+fn test_malformed_lines_missing_tokens(#[case] tokens: [&str; 5]) {
+    let line = tokens.join(" ");
     let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["Kitchen;", "", "5", "7.5", "Vinyl Plank"].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["Kitchen;", "4", "", "7.5", "Vinyl Plank"].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["Kitchen;", "4", "5", "", "Vinyl Plank"].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["Kitchen;", "4", "5", "7.5", ""].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["Kitchen;", "", "5", "", "Vinyl Plank"].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
-
-    let line = ["", "4", "5", "7.5", ""].join(" ");
-    let house = HouseParser::read_house_from_str(&line);
-    assert_that!(house, is(none()));
+    assert_that!(house, is(err()));
 }
 
-#[test]
+#[rstest]
 fn test_one_room() {
     let line = "Kitchen; 4 5 7.5 Vinyl Plank";
     let house = HouseParser::read_house_from_str(&line);
 
-    assert_that!(&house, is(some()));
+    assert_that!(&house, is(ok()));
 
     let house = house.unwrap();
     assert_that!(house.get_name(), is(equal_to("House")));
     assert_that!(house.len(), is(equal_to(1)));
 }
 
-#[test]
+#[rstest]
 fn test_two_rooms() {
     let lines = [
         "Kitchen; 4 5 7.5 Vinyl Plank",
@@ -91,7 +73,7 @@ fn test_two_rooms() {
 
     let house = HouseParser::read_house_from_str(&lines);
 
-    assert_that!(&house, is(some()));
+    assert_that!(&house, is(ok()));
 
     let house = house.unwrap();
     assert_that!(house.get_name(), is(equal_to("House")));
