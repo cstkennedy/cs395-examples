@@ -13,9 +13,10 @@ def __can_be_divided_by_any(known_primes: np.array, next_prime: int):
         If next_prime can be evenly divided by any previously known prime
         return True. Return False otherwise
     """
-
+    next_prime = np.uint32(next_prime)
+    next_sqrt = np.sqrt(next_prime)
     # Grab items up to (amd including) the sqrt(next_prime)
-    limited = np.extract(known_primes <= np.sqrt(next_prime), known_primes)
+    limited = np.extract(known_primes <= next_sqrt, known_primes)
     remainders = next_prime % limited
 
     return (np.count_nonzero(remainders)) != len(remainders)
@@ -29,7 +30,7 @@ def generate_primes(to_generate):
         to_generate -- number of primes to generate
     """
 
-    known_primes = np.zeros(to_generate, dtype=np.int64)
+    known_primes = np.zeros(to_generate, dtype=np.uint32)
     known_primes[:2] = [2, 3]
 
     for next_prime in known_primes[:2]:
@@ -47,7 +48,6 @@ def generate_primes(to_generate):
         while not is_prime:
             # Guess the next prime
             next_prime += 2
-            #  print(f"{next_prime=} {known_primes[:idx]=}")
             is_prime = not __can_be_divided_by_any(known_primes[:idx], next_prime)
             #  print(f"{next_prime=} {is_prime=}")
 

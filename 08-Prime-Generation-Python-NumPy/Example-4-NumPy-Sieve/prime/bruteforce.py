@@ -18,7 +18,7 @@ def generate_primes(to_generate, sieve_size: int = 10_000_000):
 
     known_primes = [2, 3]
     for prime in known_primes:
-        yield  prime
+        yield prime
 
     # Rely on the fact the 1 is implicitly converted to True and 0 to False
     the_sieve = np.ones(sieve_size, dtype=np.bool_)

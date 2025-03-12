@@ -45,7 +45,6 @@ def generate_primes(to_generate):
         while not is_prime:
             # Guess the next prime
             next_prime += 2
-            #  print(f"{next_prime=} {known_primes[:idx]=}")
             is_prime = not __can_be_divided_by_any(known_primes[:idx], next_prime)
             #  print(f"{next_prime=} {is_prime=}")
 
