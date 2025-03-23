@@ -112,39 +112,19 @@ impl<'game> Game<Player<'game>, Player<'game>, InProgress> {
                         println!();
 
                         return if symbol == 'X' {
-                            CompletedGame {
-                                winner: Some(self.player_1),
-                                loser: Some(self.player_2),
-                                end_state: EndState::Win,
-                            }
+                            CompletedGame::win(self.player_1, self.player_2)
                         } else {
-                            CompletedGame {
-                                winner: Some(self.player_2),
-                                loser: Some(self.player_1),
-                                end_state: EndState::Win,
-                            }
+                            CompletedGame::win(self.player_2, self.player_1)
                         };
                     }
                     TurnResult::Stalemate => {
-                        return CompletedGame {
-                            winner: None,
-                            loser: None,
-                            end_state: EndState::Stalemate,
-                        }
+                        return CompletedGame::stalemate();
                     }
                     TurnResult::Forfeit => {
                         return if symbol == 'X' {
-                            CompletedGame {
-                                winner: Some(self.player_2),
-                                loser: Some(self.player_1),
-                                end_state: EndState::Forfeit,
-                            }
+                            CompletedGame::forfeit(self.player_2, self.player_1)
                         } else {
-                            CompletedGame {
-                                winner: Some(self.player_1),
-                                loser: Some(self.player_2),
-                                end_state: EndState::Forfeit,
-                            }
+                            CompletedGame::forfeit(self.player_1, self.player_2)
                         };
                     }
                     _ => {}
@@ -170,6 +150,30 @@ pub struct CompletedGame<'game> {
 }
 
 impl<'game> CompletedGame<'game> {
+    pub fn win(winner: Player<'game>, loser: Player<'game>) -> Self {
+        CompletedGame {
+            winner: winner.into(),
+            loser: loser.into(),
+            end_state: EndState::Win,
+        }
+    }
+
+    pub fn stalemate() -> Self {
+        CompletedGame {
+            winner: None,
+            loser: None,
+            end_state: EndState::Stalemate,
+        }
+    }
+
+    pub fn forfeit(winner: Player<'game>, loser: Player<'game>) -> Self {
+        CompletedGame {
+            winner: winner.into(),
+            loser: loser.into(),
+            end_state: EndState::Forfeit,
+        }
+    }
+
     pub fn is_over(&self) -> bool {
         true
     }
