@@ -29,7 +29,7 @@ pub trait Strategy: Debug {
     fn next_move(&mut self) -> Result<Move, StrategyError>;
 }
 
-const PROMPT_MSG: &str = "Enter your desired move (1-9): ";
+
 
 #[derive(Debug)]
 pub struct KeyboardStrategy<'a> {
@@ -37,6 +37,8 @@ pub struct KeyboardStrategy<'a> {
 }
 
 impl<'a> KeyboardStrategy<'a> {
+    const PROMPT_MSG: &'static str = "Enter your desired move (1-9): ";
+
     pub fn new(player_name: &'a str) -> Self {
         KeyboardStrategy { name: player_name }
     }
@@ -53,7 +55,7 @@ impl<'a> KeyboardStrategy<'a> {
 
 impl<'a> Strategy for KeyboardStrategy<'a> {
     fn next_move(&mut self) -> Result<Move, StrategyError> {
-        print!("{}, {PROMPT_MSG}", &self.name);
+        print!("{}, {}", &self.name, Self::PROMPT_MSG);
         let _ = stdout().flush();
 
         let choice: usize = Self::read_line_as_string().parse()?;
