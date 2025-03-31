@@ -19,7 +19,7 @@ fn main() -> eyre::Result<()> {
                 .with_name("Jay")
                 .with_strategy(
                     PredefinedMoves::try_from(jay_s_moves)
-                    .wrap_err("An invalid predefined move was supplied")?
+                        .wrap_err("An invalid predefined move was supplied")?
                 )
                 .build(),
         )
