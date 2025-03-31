@@ -1,4 +1,4 @@
-use eyre::{self, Result, WrapErr};
+use eyre::{self, WrapErr};
 
 use tictactoe::prelude::*;
 use tictactoe::strategy::PredefinedMoves;

@@ -29,8 +29,6 @@ pub trait Strategy: Debug {
     fn next_move(&mut self) -> Result<Move, StrategyError>;
 }
 
-
-
 #[derive(Debug)]
 pub struct KeyboardStrategy<'a> {
     name: &'a str,
