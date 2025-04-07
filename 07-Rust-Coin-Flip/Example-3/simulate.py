@@ -1,13 +1,15 @@
 import random
 import sys
 
+from typing import Final
+
 import coin_flip
 
-DEFAULT_NUM_TRIALS: int = 10_000
-SUMMARY_FMT_STR: str = "# Heads: {:>6d} ({:>6.4f}) / # Tails {:>6d} ({:>6.4f})"
+DEFAULT_NUM_TRIALS: Final[int] = 10_000
+SUMMARY_FMT_STR: Final[str] = "# Heads: {:>6d} ({:>6.4f}) / # Tails {:>6d} ({:>6.4f})"
 
 
-def main():
+def main() -> None:
     try:
         num_threads = int(sys.argv[1])
 
