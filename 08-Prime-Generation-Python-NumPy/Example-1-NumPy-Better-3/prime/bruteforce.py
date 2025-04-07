@@ -15,7 +15,7 @@ def __can_be_divided_by_any(known_primes: np.array, next_prime: int):
     """
     next_prime = np.uint32(next_prime)
     next_sqrt = np.sqrt(next_prime)
-    # Grab items up to (amd including) the sqrt(next_prime)
+    # Grab items up to (and including) the sqrt(next_prime)
     limited = np.extract(known_primes <= next_sqrt, known_primes)
     remainders = next_prime % limited
 
