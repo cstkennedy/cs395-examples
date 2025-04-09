@@ -26,7 +26,7 @@ PROGRAM_HEADING = "\n".join(
 )
 
 
-def __parse_args() -> int:
+def __parse_args() -> (int, ExecMode):
     """
     Parse command line arguments (num_primes). Default to 10.
     """

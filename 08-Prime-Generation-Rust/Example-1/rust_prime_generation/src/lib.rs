@@ -27,17 +27,7 @@ fn compute_next(known_primes: Vec<u64>) -> u64 {
 #[pyfunction]
 fn generate_primes(to_generate: usize) -> Vec<u64>
 {
-    let mut known_primes = Vec::with_capacity(to_generate);
-    known_primes.push(2);
-    known_primes.push(3);
-
-    for _idx in 3..=to_generate {
-        let next_prime = prime_generation::compute_next(&known_primes);
-
-        known_primes.push(next_prime);
-    }
-
-    known_primes
+    prime_generation::generate_primes(to_generate)
 }
 
 

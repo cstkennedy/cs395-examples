@@ -71,7 +71,7 @@ fn do_flips(num_threads: usize, num_flips: u64) -> FlipSummary {
     }
     let start = Instant::now();
     let (overall, results) = if num_threads == 1 {
-        log::error!("Sequential simulation started");
+        log::info!("Sequential simulation started");
         let result = FlipTask::simulate_flips(num_flips);
 
         (result, vec![result])
