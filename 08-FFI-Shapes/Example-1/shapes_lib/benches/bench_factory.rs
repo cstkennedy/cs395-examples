@@ -1,13 +1,13 @@
 // use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use divan::{black_box, Bencher};
+use divan::{Bencher, black_box};
 
-use shapes::prelude::Factory;
+use shapes_lib::prelude::Factory;
 
-use shapes::circle::Circle;
-use shapes::equilateral_triangle::EquilateralTriangle;
-use shapes::right_triangle::RightTriangle;
-use shapes::square::Square;
-use shapes::triangle::Triangle;
+use shapes_lib::circle::Circle;
+use shapes_lib::equilateral_triangle::EquilateralTriangle;
+use shapes_lib::right_triangle::RightTriangle;
+use shapes_lib::square::Square;
+use shapes_lib::triangle::Triangle;
 
 // Criterion
 /*

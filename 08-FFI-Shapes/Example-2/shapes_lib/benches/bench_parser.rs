@@ -3,7 +3,7 @@ use std::io::BufReader;
 use divan::{Bencher, black_box};
 use stringreader::StringReader;
 
-use shapes::prelude::Parser;
+use shapes_lib::prelude::Parser;
 
 #[divan::bench(min_time = 1)]
 fn bench_read_shapes() {
