@@ -11,18 +11,6 @@ where
 {
     let args: Vec<String> = args.collect();
 
-    /*
-    let num_threads: usize = args[1].parse().unwrap_or(1);
-    let num_threads = {
-        if num_threads < 1 {
-            1
-        } else if num_threads > 32 {
-            32
-        } else {
-            num_threads
-        }
-    };
-    */
     let num_threads: usize = args[1].parse().unwrap_or(1);
     let num_threads = num_threads.clamp(1, 32);
 
