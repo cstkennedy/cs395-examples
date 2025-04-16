@@ -1,0 +1,15 @@
+[package]
+name = "shapes_lib_py"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name="shapes_lib_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+shapes_lib = { path = "../shapes_lib" }
+
+[dependencies.pyo3]
+version = "0.23.5"
+features = ["extension-module"]

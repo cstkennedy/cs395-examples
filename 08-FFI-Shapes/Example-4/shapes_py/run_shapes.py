@@ -8,8 +8,8 @@ import sys
 from typing import Generator, Optional, TextIO
 
 from headings import BorderHeading, MultiLineBorderHeading
-from shapes import shape_factory
 from shapes.shape import Shape
+from shapes_lib_py import ShapeFactory
 
 PROGRAM_HEADING = MultiLineBorderHeading(
     content=(
@@ -25,9 +25,9 @@ FACTORY_DESCRIPTION = "\n".join(
         "~" * 38,
         "Available Shapes".center(38),
         "~" * 38,
-        shape_factory.list_known(),
+        ShapeFactory.list_known(),
         "-" * 38,
-        f"{shape_factory.number_known():>2} shapes available.\n",
+        f"{ShapeFactory.number_known():>2} shapes available.\n",
     )
 )
 
@@ -46,7 +46,7 @@ def read_shapes(shapes_in: TextIO) -> Generator[Optional[Shape], None, None]:
 
         try:
             values = [float(val) for val in values.split()]
-            shape = shape_factory.create_from_dimensions(name, values)
+            shape = ShapeFactory.create_with(name, values)
 
             yield shape
 
