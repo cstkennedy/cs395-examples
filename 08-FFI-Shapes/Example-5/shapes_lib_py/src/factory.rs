@@ -2,7 +2,10 @@ use pyo3::prelude::*;
 use pyo3::types::PyAny;
 
 use shapes_lib::prelude::{Factory, Shape};
-use shapes_lib::{circle::Circle, square::Square, triangle::Triangle, equilateral_triangle::EquilateralTriangle, right_triangle::RightTriangle};
+use shapes_lib::{
+    circle::Circle, equilateral_triangle::EquilateralTriangle, right_triangle::RightTriangle,
+    square::Square, triangle::Triangle,
+};
 
 use crate::circle::CircleWrapper;
 use crate::square::SquareWrapper;

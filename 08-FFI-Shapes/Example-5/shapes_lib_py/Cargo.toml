@@ -8,6 +8,7 @@ name="shapes_lib_py"
 crate-type = ["cdylib"]
 
 [dependencies]
+itertools = "0.14.0"
 log = "0.4.27"
 pyo3-log = "0.12.3"
 shapes_lib = { path = "../shapes_lib" }

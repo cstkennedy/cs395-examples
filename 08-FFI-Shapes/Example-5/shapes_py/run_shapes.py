@@ -62,8 +62,11 @@ def main() -> None:
     print(PROGRAM_HEADING)
     print(FACTORY_DESCRIPTION)
 
-    with open(shapes_filename, "r") as shapes_in:
-        shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+    shapes = ShapeParser.read_shapes(shapes_filename)
+    # fmt: off
+    #  with open(shapes_filename, "r") as shapes_in:
+        #  shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+    # fmt: on
 
     print(BorderHeading("Display All Shapes"))
     for shp in shapes:

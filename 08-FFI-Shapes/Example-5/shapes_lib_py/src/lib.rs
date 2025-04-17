@@ -1,22 +1,26 @@
 use std::fs::File;
+use std::io::BufRead;
 use std::io::BufReader;
+use std::path::PathBuf;
+
+use itertools::{Itertools, Either};
 
 use log;
 
 use pyo3::prelude::*;
 
-mod utilities;
 mod circle;
+mod factory;
 mod square;
 mod triangle;
-mod factory;
+mod utilities;
 
 use shapes_lib::circle::Circle;
 
 use crate::circle::CircleWrapper;
+use crate::factory::{ShapeFactory, ShapeWrapper};
 use crate::square::SquareWrapper;
 use crate::triangle::{EquilateralTriangleWrapper, RightTriangleWrapper, TriangleWrapper};
-use crate::factory::{ShapeWrapper, ShapeFactory};
 
 #[pyclass]
 pub struct ShapeParser;
@@ -29,7 +33,9 @@ impl ShapeParser {
         let split_line: Vec<&str> = line.trim().split(";").collect();
 
         if split_line.len() != 2 {
-            return Err(pyo3::exceptions::PyValueError::new_err(format!("Line '{line}' did not have exactly one (1) semicolon")));
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Line '{line}' did not have exactly one (1) semicolon"
+            )));
         }
 
         let name = split_line[0];
@@ -42,9 +48,33 @@ impl ShapeParser {
 
         Ok(shape)
     }
+
+    #[staticmethod]
+    fn read_shapes(file_path: PathBuf) -> PyResult<Vec<ShapeWrapper>> {
+        let shape_file = File::open(&file_path).map_err(|_| {
+            pyo3::exceptions::PyFileNotFoundError::new_err(format!("{file_path:?} does not exist"))
+        })?;
+
+        let buffer = BufReader::new(shape_file);
+
+        let (shapes, errors): (Vec<_>, Vec<_>) = buffer
+            .lines()
+            .flatten()
+            .map(|line| ShapeParser::read_shape(&line))
+            .partition_map(|result| {
+                match result {
+                    Ok(shape) => Either::Left(shape),
+                    Err(err) => Either::Right(err)
+                }
+            });
+
+        for err in errors {
+            log::warn!("{}", err);
+        }
+
+        Ok(shapes)
+    }
 }
-
-
 
 #[pymodule]
 pub fn shapes_lib_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
