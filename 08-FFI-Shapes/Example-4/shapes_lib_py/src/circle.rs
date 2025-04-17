@@ -4,6 +4,8 @@ use pyo3::types::PyAny;
 use shapes_lib::circle::Circle;
 use shapes_lib::prelude::*;
 
+use crate::utilities;
+
 #[pyclass(name = "Circle")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct CircleWrapper {
@@ -67,6 +69,6 @@ impl CircleWrapper {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("{:?}", self.wrapped)
+        utilities::py_repr_from_debug(&self.wrapped)
     }
 }

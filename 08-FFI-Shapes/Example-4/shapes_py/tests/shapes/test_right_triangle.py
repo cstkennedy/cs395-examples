@@ -122,4 +122,3 @@ def test_str(common_triangles):
         fancy_str,
         contains_string(FPT_FMT.format("Hypotenuse", fancy.hypotenuse)),
     )
-    assert_that(fancy_str, ends_with("\n"))

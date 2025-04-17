@@ -6,7 +6,6 @@ from hamcrest import (
     assert_that,
     close_to,
     contains_string,
-    ends_with,
     equal_to,
     is_not,
     same_instance,
@@ -95,4 +94,3 @@ def test_str(common_triangles):
 
     assert_that(fancy_str, contains_string(FPT_FMT.format("Side", fancy.side)))
 
-    assert_that(fancy_str, ends_with("\n"))

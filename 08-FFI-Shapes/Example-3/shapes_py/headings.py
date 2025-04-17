@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Self
-
 import itertools
 from dataclasses import dataclass
+from typing import Self
 
 
 @dataclass

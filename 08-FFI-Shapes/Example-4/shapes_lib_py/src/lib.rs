@@ -5,6 +5,7 @@ use std::io::BufReader;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 
+mod utilities;
 mod circle;
 mod square;
 mod triangle;

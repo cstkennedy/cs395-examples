@@ -9,17 +9,16 @@ from __future__ import annotations
 import copy
 from typing import Optional
 
-from shapes.shape import Shape
-from shapes_lib_py import Circle, Square, Triangle, EquilateralTriangle, RightTriangle
-
 import shapes_lib_py
+from shapes.shape import Shape
+from shapes_lib_py import Circle, EquilateralTriangle, RightTriangle, Square, Triangle
 
 _KNOWN_SHAPES = {
     "Triangle": Triangle,
     "Right Triangle": RightTriangle,
     "Equilateral Triangle": EquilateralTriangle,
     "Square": Square,
-    "Circle": Circle
+    "Circle": Circle,
 }  # _Dictionary_ of known shapes
 
 
@@ -33,7 +32,7 @@ def create(name: str) -> Optional[Shape]:
     Returns:
         A shape with the specified name or null if no matching shape is found
     """
-    
+
     return shapes_lib_py.ShapeFactory.create(name)
 
 
@@ -52,7 +51,6 @@ def create_from_dimensions(name: str, values: list[float]) -> Optional[Shape]:
     """
 
     return shapes_lib_py.ShapeFactory.create_with(name, values)
-
 
 
 def is_known(name: str) -> bool:

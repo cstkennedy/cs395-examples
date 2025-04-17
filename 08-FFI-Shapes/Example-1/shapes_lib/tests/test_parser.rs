@@ -2,7 +2,7 @@
 #[macro_use]
 use hamcrest2::prelude::*;
 
-use shapes::prelude::Parser;
+use shapes_lib::prelude::Parser;
 
 use std::io::BufReader;
 use stringreader::StringReader;

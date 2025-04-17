@@ -4,6 +4,8 @@ use pyo3::types::PyAny;
 use shapes_lib::prelude::*;
 use shapes_lib::square::Square;
 
+use crate::utilities;
+
 #[pyclass(name = "Square")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct SquareWrapper {
@@ -56,6 +58,6 @@ impl SquareWrapper {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("{:?}", self.wrapped)
+        utilities::py_repr_from_debug(&self.wrapped)
     }
 }

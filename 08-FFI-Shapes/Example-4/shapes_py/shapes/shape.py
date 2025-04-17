@@ -8,8 +8,8 @@ from typing import Protocol
 WIDTH_LABEL = 12  # Label Output Width
 WIDTH_VALUE = 24  # Value Output Width
 
-STR_FMT = f"{{:<{WIDTH_LABEL}}}:{{:>{WIDTH_VALUE}}}\n"
-FPT_FMT = f"{{:<{WIDTH_LABEL}}}:{{:>{WIDTH_VALUE}.4f}}\n"
+STR_FMT = f"{{:<{WIDTH_LABEL}}}:{{:>{WIDTH_VALUE}}}"
+FPT_FMT = f"{{:<{WIDTH_LABEL}}}:{{:>{WIDTH_VALUE}.4f}}"
 
 
 class Shape(Protocol):

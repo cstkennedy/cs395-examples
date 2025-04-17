@@ -1,0 +1,62 @@
+[config]
+default_to_workspace = false
+
+[env]
+PYTHON = "python3.11"
+PYO3_PYTHON="python3.11"
+
+[tasks.build-ffi-flow]
+condition = { files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*prime*"] }, platforms = ["linux"]}
+dependencies = [ "build", "copy-lib" ]
+
+[tasks.build]
+condition = { files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*prime*"] } }
+private = true
+command = "cargo"
+args = ["build", "--release"]
+
+[tasks.copy-lib]
+condition = { files_modified = { input = ["./target/release/libshapes_lib_py.so"], output = ["shapes_lib_py.so"] }, platforms = ["linux"] }
+private = true
+command = "cp"
+args = [ "./target/release/libshapes_lib_py.so", "shapes_py/shapes_lib_py.so" ]
+
+[tasks.clean-ffi-flow]
+condition = { platforms = ["linux"] }
+dependencies = [ "clean", "clean-lib" ]
+
+[tasks.clean]
+command = "cargo"
+args = [ "clean" ]
+
+[tasks.clean-lib]
+condition = { platforms = ["linux"] }
+command = "rm"
+args = [ "shapes_py/shapes_lib_py.so" ]
+
+[tasks.test-python]
+dependencies = [ "build", "copy-lib" ]
+cwd = "./shapes_py"
+command = "${PYTHON}"
+args = ["-m", "pytest", "-v", "tests", "-ra"]
+
+[tasks.run-python]
+dependencies = [ "build", "copy-lib" ]
+cwd = "./shapes_py"
+command = "${PYTHON}"
+args = ["run_shapes.py", "${@}"]
+
+[tasks.run-rust]
+dependencies = ["build"]
+command = "./target/release/shapes_rs"
+args = ["${@}"]
+
+[tasks.test-rust]
+dependencies = ["build"]
+command = "cargo"
+args = ["test"]
+
+[tasks.bench-rust]
+dependencies = ["build"]
+command = "cargo"
+args = ["bench"]

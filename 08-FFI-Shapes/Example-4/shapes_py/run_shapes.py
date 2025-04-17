@@ -1,11 +1,6 @@
-#! /usr/bin/env python3
-
-# Programmer : Thomas J. Kennedy
-
-
 import logging
 import sys
-from typing import Generator, Optional, TextIO
+from typing import Final, Generator, Optional, TextIO
 
 from headings import BorderHeading, MultiLineBorderHeading
 from shapes.shape import Shape
@@ -20,7 +15,7 @@ PROGRAM_HEADING = MultiLineBorderHeading(
     symbol="-",
 )
 
-FACTORY_DESCRIPTION = "\n".join(
+FACTORY_DESCRIPTION: Final[str] = "\n".join(
     (
         "~" * 38,
         "Available Shapes".center(38),
@@ -32,32 +27,40 @@ FACTORY_DESCRIPTION = "\n".join(
 )
 
 
-def read_shapes(shapes_in: TextIO) -> Generator[Optional[Shape], None, None]:
+def read_shape(line: str) -> Shape | None:
+    """
+    T.B.W.
+    """
+
+    # Split on ";" and Strip leading/trailing whitespace
+    # And Unpack the list
+    name, values = [part.strip() for part in line.split(";")]
+
+    values = values.strip()
+
+    values = [float(val) for val in values.split()]
+    shape = ShapeFactory.create_with(name, values)
+
+    return shape
+
+
+def read_shapes(shapes_in: TextIO) -> Generator[Shape | None, None, None]:
     """
     T.B.W.
     """
 
     for line in shapes_in:
-        # Split on ";" and Strip leading/trailing whitespace
-        # And Unpack the list
-        name, values = [part.strip() for part in line.split(";")]
-
-        values = values.strip()
-
         try:
-            values = [float(val) for val in values.split()]
-            shape = ShapeFactory.create_with(name, values)
-
-            yield shape
+            yield read_shape(line)
 
         except KeyError as _err:
-            logging.warning(f'Skipped shape "{name:}" due to unknown shape.')
+            logging.warning(f"Skipped {line=!r:} due to unknown shape.")
 
         except ValueError as _err:
-            logging.warning(f'Skipped shape "{name:}" due to malformed line.')
+            logging.warning(f"Skipped shape {line=!r:} due to malformed line.")
 
 
-def main():
+def main() -> None:
     """
     The main function. In practice I could name this
     anything. The name main was selected purely

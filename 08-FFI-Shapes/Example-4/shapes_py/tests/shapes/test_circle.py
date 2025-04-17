@@ -3,8 +3,8 @@ import copy
 import pytest
 from hamcrest import *
 
-from shapes_lib_py import Circle
 from shapes.shape import FPT_FMT, Shape
+from shapes_lib_py import Circle
 
 """
 1 - Does this piece of code perform the operations
@@ -81,7 +81,6 @@ def test_str(common_circles):
 
     assert_that(fancy_str, starts_with("Name"))
     assert_that(fancy_str, contains_string("Circle"))
-    assert_that(fancy_str, ends_with("\n"))
 
     assert_that(
         fancy_str,
@@ -91,4 +90,3 @@ def test_str(common_circles):
     assert_that(fancy_str, contains_string(FPT_FMT.format("Radius", fancy.radius)))
     assert_that(fancy_str, contains_string(FPT_FMT.format("Diameter", fancy.diameter)))
 
-    assert_that(fancy_str, ends_with("\n"))

@@ -16,6 +16,7 @@ from shapes_lib_py import Square
 1 Test per mutator
 """
 
+
 @pytest.fixture
 def common_squares():
     generic = Square()
@@ -82,4 +83,3 @@ def test_str(common_squares):
     )
     assert_that(fancy_str, contains_string(FPT_FMT.format("Area", fancy.area())))
     assert_that(fancy_str, contains_string(FPT_FMT.format("Side", fancy.side)))
-    assert_that(fancy_str, ends_with("\n"))

@@ -6,6 +6,8 @@ use shapes_lib::prelude::*;
 use shapes_lib::right_triangle::RightTriangle;
 use shapes_lib::triangle::Triangle;
 
+use crate::utilities;
+
 #[pyclass(name = "Triangle")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct TriangleWrapper {
@@ -78,7 +80,7 @@ impl TriangleWrapper {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("{:?}", self.wrapped)
+        utilities::py_repr_from_debug(&self.wrapped)
     }
 }
 
@@ -134,7 +136,7 @@ impl EquilateralTriangleWrapper {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("{:?}", self.wrapped)
+        utilities::py_repr_from_debug(&self.wrapped)
     }
 }
 
@@ -205,6 +207,6 @@ impl RightTriangleWrapper {
     }
 
     pub fn __repr__(&self) -> String {
-        format!("{:?}", self.wrapped)
+        utilities::py_repr_from_debug(&self.wrapped)
     }
 }

@@ -16,6 +16,7 @@ from shapes_lib_py import Square
 1 Test per mutator
 """
 
+
 @pytest.fixture
 def common_squares():
     generic = Square()

@@ -42,10 +42,10 @@ def read_shapes(shapes_in: TextIO) -> Generator[Optional[Shape], None, None]:
         # And Unpack the list
         name, values = [part.strip() for part in line.split(";")]
 
-        values = values.strip()
+        values: list[str] = values.strip()
 
         try:
-            values = [float(val) for val in values.split()]
+            values: list[float] = [float(val) for val in values.split()]
             shape = shape_factory.create_from_dimensions(name, values)
 
             yield shape
@@ -78,6 +78,9 @@ def main():
 
     with open(shapes_filename, "r") as shapes_in:
         shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+
+    if not shapes:
+        raise RuntimeError(f"'{shapes_filename}' did not contain any valid shapes")
 
     print(BorderHeading("Display All Shapes"))
     for shp in shapes:

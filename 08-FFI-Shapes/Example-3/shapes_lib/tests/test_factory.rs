@@ -2,13 +2,13 @@
 #[macro_use]
 use hamcrest2::prelude::*;
 
-use shapes::prelude::Factory;
+use shapes_lib::prelude::Factory;
 
-use shapes::circle::Circle;
-use shapes::equilateral_triangle::EquilateralTriangle;
-use shapes::right_triangle::RightTriangle;
-use shapes::square::Square;
-use shapes::triangle::Triangle;
+use shapes_lib::circle::Circle;
+use shapes_lib::equilateral_triangle::EquilateralTriangle;
+use shapes_lib::right_triangle::RightTriangle;
+use shapes_lib::square::Square;
+use shapes_lib::triangle::Triangle;
 
 #[test]
 fn test_is_known() {
