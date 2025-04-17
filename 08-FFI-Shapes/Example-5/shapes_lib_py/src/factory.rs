@@ -129,11 +129,36 @@ impl ShapeFactory {
     #[staticmethod]
     pub fn create_with(name: &str, dims: Vec<f64>) -> PyResult<ShapeWrapper> {
         match name {
-            "Circle" => Ok(Circle::from(&dims[..]).into()),
-            "Square" => Ok(Square::from(&dims[..]).into()),
-            "Triangle" => Ok(Triangle::from(&dims[..]).into()),
-            "Equilateral Triangle" => Ok(EquilateralTriangle::from(&dims[..]).into()),
-            "Right Triangle" => Ok(RightTriangle::from(&dims[..]).into()),
+            "Circle" => match dims.len() {
+                1 => Ok(Circle::from(&dims[..]).into()),
+                _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "{name:?} requires '1' dimension"
+                ))),
+            },
+            "Square" => match dims.len() {
+                1 => Ok(Square::from(&dims[..]).into()),
+                _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "{name:?} requires '1' dimension"
+                ))),
+            },
+            "Triangle" => match dims.len() {
+                3 => Ok(Triangle::from(&dims[..]).into()),
+                _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "{name:?} requires '3' dimensions"
+                ))),
+            },
+            "Equilateral Triangle" => match dims.len() {
+                1 => Ok(EquilateralTriangle::from(&dims[..]).into()),
+                _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "{name:?} requires '1' dimension"
+                ))),
+            },
+            "Right Triangle" => match dims.len() {
+                2 => Ok(RightTriangle::from(&dims[..]).into()),
+                _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "{name:?} requires '2' dimensions"
+                ))),
+            },
             _ => Err(pyo3::exceptions::PyKeyError::new_err(format!(
                 "'{name}' is not known"
             ))),

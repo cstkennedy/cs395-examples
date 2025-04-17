@@ -3,7 +3,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::path::PathBuf;
 
-use itertools::{Itertools, Either};
+use itertools::{Either, Itertools};
 
 use log;
 
@@ -61,11 +61,9 @@ impl ShapeParser {
             .lines()
             .flatten()
             .map(|line| ShapeParser::read_shape(&line))
-            .partition_map(|result| {
-                match result {
-                    Ok(shape) => Either::Left(shape),
-                    Err(err) => Either::Right(err)
-                }
+            .partition_map(|result| match result {
+                Ok(shape) => Either::Left(shape),
+                Err(err) => Either::Right(err),
             });
 
         for err in errors {

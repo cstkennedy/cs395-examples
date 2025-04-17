@@ -88,9 +88,22 @@ def main() -> None:
         print(shp)
         print()
 
+def set_up_logging(level: int = logging.WARN) -> None:
+    logger = logging.getLogger("shapes_lib_py")
+    logger.setLevel(level)
+
+    handler = logging.StreamHandler(sys.stderr)
+
+    handler.setFormatter(
+        logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+    )
+
+    logger.addHandler(handler)
+
 
 if __name__ == "__main__":
     try:
+        set_up_logging(level=logging.INFO)
         main()
     except FileNotFoundError as err:
         print(err)
