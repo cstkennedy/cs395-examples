@@ -64,9 +64,12 @@ def main() -> None:
 
     shapes = ShapeParser.read_shapes(shapes_filename)
     # fmt: off
-    #  with open(shapes_filename, "r") as shapes_in:
-        #  shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+    # with open(shapes_filename, "r") as shapes_in:
+    #     shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
     # fmt: on
+
+    if not shapes:
+        raise RuntimeError(f"{shapes_filename!r} did not contain any valid shapes")
 
     print(BorderHeading("Display All Shapes"))
     for shp in shapes:
@@ -88,15 +91,14 @@ def main() -> None:
         print(shp)
         print()
 
+
 def set_up_logging(level: int = logging.WARN) -> None:
     logger = logging.getLogger("shapes_lib_py")
     logger.setLevel(level)
 
     handler = logging.StreamHandler(sys.stderr)
 
-    handler.setFormatter(
-        logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-    )
+    handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
 
     logger.addHandler(handler)
 

@@ -89,4 +89,3 @@ def test_str(common_circles):
     assert_that(fancy_str, contains_string(FPT_FMT.format("Area", fancy.area())))
     assert_that(fancy_str, contains_string(FPT_FMT.format("Radius", fancy.radius)))
     assert_that(fancy_str, contains_string(FPT_FMT.format("Diameter", fancy.diameter)))
-

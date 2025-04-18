@@ -132,4 +132,3 @@ def test_str(common_triangles):
     assert_that(fancy_str, contains_string(FPT_FMT.format("Side B", fancy.side_b)))
 
     assert_that(fancy_str, contains_string(FPT_FMT.format("Side C", fancy.side_c)))
-
