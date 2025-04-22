@@ -27,8 +27,6 @@ FACTORY_DESCRIPTION: Final[str] = "\n".join(
 )
 
 
-
-
 def main() -> None:
     """
     The main function. In practice I could name this
