@@ -1,15 +1,10 @@
-#! /usr/bin/env python3
-
-# Programmer : Thomas J. Kennedy
-
-
 import logging
 import sys
-from typing import Generator, Optional, TextIO
+from typing import Final, Generator, Optional, TextIO
 
 from headings import BorderHeading, MultiLineBorderHeading
-from shapes import shape_factory
 from shapes.shape import Shape
+from shapes_lib_py import ShapeFactory, ShapeParser
 
 PROGRAM_HEADING = MultiLineBorderHeading(
     content=(
@@ -20,41 +15,35 @@ PROGRAM_HEADING = MultiLineBorderHeading(
     symbol="-",
 )
 
-FACTORY_DESCRIPTION = "\n".join(
+FACTORY_DESCRIPTION: Final[str] = "\n".join(
     (
         "~" * 38,
         "Available Shapes".center(38),
         "~" * 38,
-        shape_factory.list_known(),
+        ShapeFactory.list_known(),
         "-" * 38,
-        f"{shape_factory.number_known():>2} shapes available.\n",
+        f"{ShapeFactory.number_known():>2} shapes available.\n",
     )
 )
 
 
-def read_shapes(shapes_in: TextIO) -> Generator[Optional[Shape], None, None]:
+def read_shapes(shapes_in: TextIO) -> Generator[Shape | None, None, None]:
     """
     T.B.W.
     """
 
     for line in shapes_in:
-        # Split on ";" and Strip leading/trailing whitespace
-        # And Unpack the list
         try:
-            name, values = [part.strip() for part in line.split(";")]
+            yield ShapeParser.read_shape(line)
 
-            values = values.strip()
+        except KeyError as _err:
+            logging.warning(f"Skipped {line=!r:} due to unknown shape.")
 
-            values = [float(val) for val in values.split()]
-            shape = shape_factory.create_from_dimensions(name, values)
-
-            yield shape
-
-        except (ValueError, TypeError) as _err:
-            logging.warning(f'Skipped shape "{name:}" due to malformed line.')
+        except ValueError as _err:
+            logging.warning(f"Skipped shape {line=!r:} due to malformed line.")
 
 
-def main():
+def main() -> None:
     """
     The main function. In practice I could name this
     anything. The name main was selected purely
@@ -73,28 +62,50 @@ def main():
     print(PROGRAM_HEADING)
     print(FACTORY_DESCRIPTION)
 
-    with open(shapes_filename, "r") as shapes_in:
-        shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+    shapes = ShapeParser.read_shapes(shapes_filename)
+    # fmt: off
+    # with open(shapes_filename, "r") as shapes_in:
+    #     shapes = [shp for shp in read_shapes(shapes_in) if shp is not None]
+    # fmt: on
+
+    if not shapes:
+        raise RuntimeError(f"{shapes_filename!r} did not contain any valid shapes")
 
     print(BorderHeading("Display All Shapes"))
     for shp in shapes:
         print(shp)
+        print()
 
     print(BorderHeading("Display Largest Shape (Area)"))
     largest_shape = max(shapes, key=lambda shape: shape.area())
     print(largest_shape)
+    print()
 
     print(BorderHeading("Display Smallest Shape (Perimeter)"))
     smallest_shape = min(shapes, key=lambda shape: shape.perimeter())
     print(smallest_shape)
+    print()
 
     print(BorderHeading("Display Shapes Sorted by Name"))
     for shp in sorted(shapes, key=lambda shape: shape.name):
         print(shp)
+        print()
+
+
+def set_up_logging(level: int = logging.WARN) -> None:
+    logger = logging.getLogger("shapes_lib_py")
+    logger.setLevel(level)
+
+    handler = logging.StreamHandler(sys.stderr)
+
+    handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
+
+    logger.addHandler(handler)
 
 
 if __name__ == "__main__":
     try:
+        set_up_logging(level=logging.INFO)
         main()
     except FileNotFoundError as err:
         print(err)
