@@ -50,7 +50,7 @@ impl ShapeParser {
     }
 
     #[staticmethod]
-    fn read_shapes(file_path: PathBuf) -> PyResult<Vec<ShapeWrapper>> {
+    pub fn read_shapes(file_path: PathBuf) -> PyResult<Vec<ShapeWrapper>> {
         let shape_file = File::open(&file_path).map_err(|_| {
             pyo3::exceptions::PyFileNotFoundError::new_err(format!("{file_path:?} does not exist"))
         })?;
