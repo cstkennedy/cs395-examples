@@ -14,7 +14,7 @@ Rust. Topics include:
 
 This discussion is split into six (6) examples:
 
-  - **Example 1**
+  - **Example 1**:
    A recorded lecture is available on
    [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=1c7ece47-5493-4663-9fde-b322012036e8)
    or
@@ -22,7 +22,7 @@ This discussion is split into six (6) examples:
 
     - Basics of Polymorphism
 
-  - **Example 2**
+  - **Example 2**:
    A recorded lecture is available on
    [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=5a557499-ad75-4fc6-9a90-b3220120362a)
    or
@@ -32,7 +32,7 @@ This discussion is split into six (6) examples:
     - Factory Pattern and *Interfaces as a Contract*
     - Implementing the `From` trait
 
-  - **Example 3**
+  - **Example 3**:
    A recorded lecture is available on
    [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=37891212-acf3-4cfb-b9e3-b32201203668)
    or
@@ -44,7 +44,7 @@ This discussion is split into six (6) examples:
     - Add parser module
     - Add prelude
 
-  - **Example 4** 
+  - **Example 4**:
    A recorded lecture is available on
    [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=577d91dc-7746-415c-bc63-b32201203694)
    or
@@ -52,7 +52,7 @@ This discussion is split into six (6) examples:
 
     - Add `From<&[f64]>` for Shape creation
 
-  - **Example 5** 
+  - **Example 5**:
    A recorded lecture is available on
    [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=2f3fa41e-ee70-42f5-9bb6-b32201204444)
    or
