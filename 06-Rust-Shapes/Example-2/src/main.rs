@@ -129,5 +129,6 @@ fn main() {
     }
 
     println!();
-    println!("{:?}", shapes);
+    // println!("{:?}", shapes);
+    println!("{:#?}", shapes);
 }

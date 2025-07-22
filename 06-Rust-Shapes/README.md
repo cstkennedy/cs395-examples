@@ -40,6 +40,7 @@ This discussion is split into six (6) examples:
 
   - **Example 7**
     - Finishing `main` again
+    - Fix `ShapeFactory` with `ShapePair`
 
   - **Example 8**
     - Using clap
