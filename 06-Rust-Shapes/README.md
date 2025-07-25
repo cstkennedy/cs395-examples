@@ -61,16 +61,41 @@ This discussion is split into six (6) examples:
     - Refactor factory module to use `LazyCell` for constants
 
   - **Example 6**
+   A recorded lecture is available on
+   [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=99a92681-dff9-466b-9afe-b32500e08a5e)
+   or
+   [YouTube](https://youtu.be/HN-8MJUyJi0)
+
     - Finishing `main`
 
   - **Example 7**
+   A recorded lecture is available on
+   [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=78befaab-e42b-4b28-819b-b32500e08ac4)
+   or
+   [YouTube](https://youtu.be/HArJDl5gbU8)
+
     - Finishing `main` again
     - Fix `ShapeFactory` with `ShapePair`
 
   - **Example 8**
+   A recorded lecture is available on
+   [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=78befaab-e42b-4b28-819b-b32500e08ac4)
+   or
+   [YouTube](https://youtu.be/7Ta7og5_9Sg)
+
     - Using clap
     - Fixing traits
     - Removing `unwrap`
+
+  - **Example 9**
+   A recorded lecture is available on
+   [ODU - Panopto](https://odu.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=12a7328d-9159-431e-a31f-b32500e08afa)
+   or
+   [YouTube](https://youtu.be/v7lIDW5ObPU)
+
+    - Fix `new`
+    - Add `Default` trait implementations
+    - Add benchmarks
 
 
 
