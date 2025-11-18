@@ -1,0 +1,8 @@
+[workspace]
+resolver="3"
+
+members = [
+    "shapes_lib",
+    "shapes_lib_py",
+    "shapes_rs"
+]
