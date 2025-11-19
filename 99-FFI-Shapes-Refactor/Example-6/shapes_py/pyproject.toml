@@ -1,0 +1,19 @@
+[project]
+name = "python-shapes"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pyhamcrest>=2.1.0",
+    "pytest>=8.4.0",
+    "pytest-benchmark>=5.2.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "benches"]
+python_files = ["test_*.py", "bench_*.py"]
+python_functions = ["test_*", "bench_*"]
+# Thank you... <https://github.com/astral-sh/uv/issues/7260#issuecomment-2341586054>
+pythonpath = ["."]
+
+# Benhmakr command
+# uv run pytest --benchmark-only -v -ra --no-header --benchmark-time-unit ns --benchmark-columns min,max,mean,median,rounds,iterations
