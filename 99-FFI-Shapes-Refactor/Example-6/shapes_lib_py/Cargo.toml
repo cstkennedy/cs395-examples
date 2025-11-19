@@ -5,7 +5,7 @@ edition = "2024"
 
 [lib]
 name="shapes_lib_py"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 itertools = "0.14.0"
@@ -18,3 +18,16 @@ thiserror = "2.0.12"
 [dependencies.pyo3]
 version = "0.24.1"
 features = ["extension-module"]
+
+[dev-dependencies]
+# criterion = "0.5.1"
+divan = "0.1.17"
+
+[[bench]]
+name = "bench_lib_py_factory"
+harness = false
+
+[[bench]]
+name = "bench_lib_py_parser"
+harness = false
+

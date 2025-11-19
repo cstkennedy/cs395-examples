@@ -11,11 +11,11 @@ use log;
 use pyo3::prelude::*;
 use shapes_lib::prelude::MonoShape;
 
-mod circle;
-mod error;
-mod factory;
-mod square;
-mod triangle;
+pub mod circle;
+pub mod error;
+pub mod factory;
+pub mod square;
+pub mod triangle;
 mod utilities;
 
 use crate::circle::CircleWrapper;
@@ -147,8 +147,8 @@ impl ShapeCollection {
     /// Sort the ShapeCollection in place
     pub fn sort(&mut self, attribute: CompareBy) {
         match attribute {
-            // TODO: rework &str to String allocation/conversion
-            CompareBy::Name => self.shapes.sort_by_key(|shp| shp.name().to_owned()),
+            // TODO: rework &str to String allocation/conversion (DONE)
+            CompareBy::Name => self.shapes.sort_by(|lhs, rhs| lhs.name().cmp(rhs.name())),
             CompareBy::Perimeter => self.shapes.sort_by_key(|shp| OrderedFloat(shp.perimeter())),
             CompareBy::Area => self.shapes.sort_by_key(|shp| OrderedFloat(shp.area())),
         };

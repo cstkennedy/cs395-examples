@@ -1,13 +1,10 @@
-// use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use divan::{Bencher, black_box};
 
-use shapes_lib::prelude::Factory;
-
 use shapes_lib::circle::Circle;
-use shapes_lib::equilateral_triangle::EquilateralTriangle;
-use shapes_lib::right_triangle::RightTriangle;
-use shapes_lib::square::Square;
 use shapes_lib::triangle::Triangle;
+
+use shapes_lib_py::factory::ShapeFactory;
+use shapes_lib_py::circle::CircleWrapper;
 
 
 const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
@@ -20,40 +17,40 @@ const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
 
 #[divan::bench(min_time = 1, args = ["Circle", "Square", "Triangle", "Right Triangle", "Equilateral Triangle"])]
 fn bench_is_known_valid(name: &str) {
-    let _ = Factory::is_known(black_box(name));
+    let _ = ShapeFactory::is_known(black_box(name));
 }
 
 #[divan::bench(min_time = 1, args = ["Not Known"])]
 fn bench_is_known_invalid(name: &str) {
-    let _ = Factory::is_known(black_box(name));
+    let _ = ShapeFactory::is_known(black_box(name));
 }
 
 #[divan::bench(min_time = 1)]
 fn bench_number_known() {
-    let _ = Factory::number_known();
+    let _ = ShapeFactory::number_known();
 }
 
 #[divan::bench(min_time = 1)]
 fn bench_list_known() {
-    let _ = Factory::list_known();
+    let _ = ShapeFactory::list_known();
 }
 
 #[divan::bench(min_time = 1, args = SHAPE_TUPLES)]
 fn bench_create(name_and_vals: (&str, &[f64])) {
     let (name, _) = name_and_vals;
 
-    let _ = Factory::create(black_box(&name));
+    let _ = ShapeFactory::create(black_box(&name));
 }
 
 #[divan::bench(min_time = 1, args = SHAPE_TUPLES)]
 fn bench_create_with(name_and_vals: (&str, &[f64])) {
     let (name, dims) = name_and_vals;
-    let _ = Factory::create_with(black_box(&name), black_box(&dims));
+    let _ = ShapeFactory::create_with(black_box(&name), black_box(dims.to_vec()));
 }
 
 #[divan::bench(min_time = 1)]
 fn bench_create_with_invalid() {
-    let _ = Factory::create_with(black_box("Triangle"), black_box(&[1.0, 3.0]));
+    let _ = ShapeFactory::create_with(black_box("Triangle"), black_box(vec![1.0, 3.0]));
 }
 
 #[divan::bench(min_time = 1)]
