@@ -40,16 +40,17 @@ cwd = "./shapes_py"
 command = "${PYTHON}"
 args = ["-m", "pytest", "-v", "tests", "-ra"]
 
+[tasks.bench-python]
+dependencies = [ "build", "copy-lib" ]
+cwd = "./shapes_py"
+command = "uv"
+args = [ "run", "pytest", "--benchmark-only", "-v", "-ra", "--no-header", "--benchmark-time-unit", "ns", "--benchmark-columns", "min,max,median,mean,rounds,iterations" ]
+
 [tasks.run-python]
 dependencies = [ "build", "copy-lib" ]
 cwd = "./shapes_py"
 command = "${PYTHON}"
 args = ["run_shapes.py", "${@}"]
-
-[tasks.run-rust]
-dependencies = ["build"]
-command = "./target/release/shapes_rs"
-args = ["${@}"]
 
 [tasks.test-rust]
 dependencies = ["build"]
@@ -61,6 +62,14 @@ dependencies = ["build"]
 command = "cargo"
 args = ["bench"]
 
+[tasks.run-rust]
+dependencies = ["build"]
+command = "./target/release/shapes_rs"
+args = ["${@}"]
+
 [tasks.test-flow]
 dependencies = ["test-rust", "test-python"]
+
+[tasks.bench-flow]
+dependencies = ["bench-rust", "bench-python"]
 
