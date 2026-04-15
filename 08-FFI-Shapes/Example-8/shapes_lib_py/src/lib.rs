@@ -173,6 +173,12 @@ impl ShapeCollection {
     pub fn __str__(&self) -> String {
         self.shapes.iter().map(ShapeWrapper::__str__).join("\n\n")
     }
+
+    /*
+    pub fn __len__(&self) -> usize {
+        self.shapes.len()
+    }
+    */
 }
 
 #[pymodule]
