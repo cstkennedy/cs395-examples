@@ -159,6 +159,8 @@ impl ShapeCollection {
     }
 }
 
+// Old - Procedural
+/*
 #[pymodule]
 pub fn shapes_lib_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     pyo3_log::init();
@@ -174,4 +176,48 @@ pub fn shapes_lib_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<CompareBy>()?;
     m.add_class::<ShapeCollection>()?;
     Ok(())
+}
+*/
+
+// New -  Declarative
+#[pymodule]
+mod shapes_lib_py {
+    use super::*;
+
+    #[pymodule_export]
+    use CircleWrapper;
+
+    #[pymodule_export]
+    use SquareWrapper;
+
+    #[pymodule_export]
+    use TriangleWrapper;
+
+    #[pymodule_export]
+    use EquilateralTriangleWrapper;
+
+    #[pymodule_export]
+    use RightTriangleWrapper;
+
+    #[pymodule_export]
+    use ShapeWrapper;
+
+    #[pymodule_export]
+    use ShapeFactory;
+
+    #[pymodule_export]
+    use ShapeParser;
+
+    #[pymodule_export]
+    use CompareBy;
+
+    #[pymodule_export]
+    use ShapeCollection;
+
+    #[pymodule_init]
+    pub fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
+        pyo3_log::init();
+
+        Ok(())
+    }
 }

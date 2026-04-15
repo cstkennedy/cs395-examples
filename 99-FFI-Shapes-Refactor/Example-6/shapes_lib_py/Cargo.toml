@@ -11,12 +11,12 @@ crate-type = ["cdylib", "rlib"]
 itertools = "0.14.0"
 log = "0.4.27"
 ordered-float = "5.0.0"
-pyo3-log = "0.12.3"
+pyo3-log = "0.13.3"
 shapes_lib = { path = "../shapes_lib" }
 thiserror = "2.0.12"
 
 [dependencies.pyo3]
-version = "0.24.1"
+version = "0.28.3"
 features = ["extension-module"]
 
 [dev-dependencies]
