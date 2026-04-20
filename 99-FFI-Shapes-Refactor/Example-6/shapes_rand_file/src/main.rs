@@ -39,7 +39,7 @@ pub fn random_file(num_lines: u64) -> String {
 
         let (shape, dim_count) = KNOWN_SHAPES.choose(&mut rng).unwrap();
 
-        write!(random_shape_file, "{}", shape);
+        write!(random_shape_file, "{};", shape);
 
         for _ in 0..*dim_count {
             let dim = rng.random_range(0.0..10.0);
