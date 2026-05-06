@@ -2,50 +2,31 @@
 This is a demo driver for a basic single round game of Tic-Tac-Toe.
 """
 
-# -------------------------------------------------------------------------------
-# Set up logging before tictactoe.factory is imported... so that
-# we can actually log module initialization
-# -------------------------------------------------------------------------------
-import logging_bodge  # noqa: F401, W0611
-import tictactoe.factory as factories
-from tictactoe.builders import GameBuilder
+import logging
+
+from logging_bodge import set_up_logging
+from tictactoe import Game, Player
+from tictactoe.player import PredefinedMoves
 
 
 def main() -> None:
     """
     This is a simple main function that takes no command line arguments.
     """
-    print(
-        "\n".join(
-            (
-                "Known Strategies:",
-                factories.MoveStrategyFactory.list_strategies(),
-                "",
-                "Render Options:",
-                factories.RenderStrategyFactory.list_strategies(),
-                "",
-            )
-        )
-    )
 
-    # fmt: off
-    game = (
-        GameBuilder.builder()
-        .add_human_player(name="Tom")
-        .add_player(
+    game = Game(
+        player1=Player.create_human(name="Thomas"),
+        player2=Player.create_computer(
             name="Jay",
-            strategy="SetMoves",
-            moves=[5, 1, 3, 7, 9, 2, 4, 6, 8]
-        )
-        .build()
-        .play_match()
-    )
-    # fmt: on
+            strategy=PredefinedMoves(moves=[5, 1, 3, 7, 9, 2, 4, 6, 8]),
+        ),
+    ).play_match()
 
     print(game)
 
 
 if __name__ == "__main__":
+    set_up_logging(level=logging.INFO)
     main()
 
     # @todo add exception handling

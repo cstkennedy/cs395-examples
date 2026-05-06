@@ -1,7 +1,6 @@
 import itertools
-from typing import Optional
 
-from .board import VALID_SYMBOLS, Board
+from .board import Board
 
 
 def _all_three_match(triple: list[str]) -> bool:
@@ -29,39 +28,29 @@ class Referee:
     exposed to the outside world.
     """
 
-    def __init__(self, board: Board):
+    @staticmethod
+    def check_for_win(board_ref: Board) -> bool:
         """
-        Create the referee and allow access
-        to a board through a constant reference variable.
-
-        Args:
-            board: the board to monitor
-        """
-
-        self._board_ref = board
-
-    def check_for_win(self) -> Optional[str]:
-        """
-        Check for a win condition.
+        Check for a win condition (i.e., three in a row).
 
         Returns:
-            "X" if player1, or "O" if player2 won. None indicates neither
-            player won.
+            True if a player has won and False otherwise
         """
 
         triples = itertools.chain(
-            self._board_ref.rows(),
-            self._board_ref.columns(),
-            self._board_ref.diagonals(),
+            board_ref.rows(),
+            board_ref.columns(),
+            board_ref.diagonals(),
         )
 
         # if they match, grab the 'X' or 'O'
-        if matching_triple := next(filter(_all_three_match, triples), None):
-            return matching_triple[0]
+        if next(filter(_all_three_match, triples), None):
+            return True
 
-        return None
+        return False
 
-    def selected_cell_is_empty(self, move: int) -> bool:
+    @staticmethod
+    def selected_cell_is_empty(board_ref: Board, move: int) -> bool:
         """
         Determine whether a cell in the board has been selected
         by a player.
@@ -73,4 +62,4 @@ class Referee:
             True if the cell is currently empty
         """
 
-        return self._board_ref.get_cell(move) not in VALID_SYMBOLS
+        return board_ref.get_cell(move).isdigit()

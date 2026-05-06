@@ -40,13 +40,12 @@ class Referee:
 
         self._board_ref = board
 
-    def check_for_win(self) -> Optional[str]:
+    def check_for_win(self) -> bool:
         """
-        Check for a win condition.
+        Check for a win condition (i.e., three in a row).
 
         Returns:
-            "X" if player1, or "O" if player2 won. None indicates neither
-            player won.
+            True if a player has won and False otherwise
         """
 
         triples = itertools.chain(
@@ -57,9 +56,9 @@ class Referee:
 
         # if they match, grab the 'X' or 'O'
         if matching_triple := next(filter(_all_three_match, triples), None):
-            return matching_triple[0]
+            return True
 
-        return None
+        return False
 
     def selected_cell_is_empty(self, move: int) -> bool:
         """
@@ -73,4 +72,4 @@ class Referee:
             True if the cell is currently empty
         """
 
-        return self._board_ref.get_cell(move) not in VALID_SYMBOLS
+        return self._board_ref.get_cell(move).isdigit()

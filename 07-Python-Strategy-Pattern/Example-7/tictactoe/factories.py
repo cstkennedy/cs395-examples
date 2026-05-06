@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Generic, Self, Type, TypeVar
+from typing import Any, Callable, ClassVar, Generic, Self, TypeVar
 
 from .board import (
     NullRender,
@@ -20,7 +20,7 @@ class StrategyFactory(Generic[S]):
     Common logic for all strategy factories.
     """
 
-    __strategy_repo: dict[tuple[Type[Self], str], CreationFunction] = {}
+    __strategy_repo: dict[tuple[type[Self], str], CreationFunction[S]] = {}
     """
     This stores all strategies for every Factory class that uses
     StrategyFactory as a base.
@@ -30,13 +30,13 @@ class StrategyFactory(Generic[S]):
     """
 
     @classmethod
-    def add(cls, type_of_strategy: str, a_strategy: CreationFunction) -> None:
+    def add(cls, type_of_strategy: str, a_strategy: CreationFunction[S]) -> None:
         if (cls, type_of_strategy) in cls.__strategy_repo:
             raise ValueError(
                 f'An entry for "{type_of_strategy}" already exists'
             )
 
-        cls.__strategy_repo[(cls, type_of_strategy)] = a_strategy  # type: ignore
+        cls.__strategy_repo[(cls, type_of_strategy)] = a_strategy
         logger.info(f"Added '{type_of_strategy}' entry for '{cls}'")
 
     @classmethod
@@ -69,16 +69,30 @@ class StrategyFactory(Generic[S]):
 
 
 class MoveStrategyFactory(StrategyFactory[MoveStrategy]):
+    defaults_set_up: ClassVar[bool] = False
+
     @classmethod
     def add_defaults(cls) -> None:
+        if cls.defaults_set_up:
+            return
+
         cls.add("Keyboard", KeyboardStrategy)
         cls.add("SetMoves", PredefinedMoves)
 
+        cls.defaults_set_up = True
+
 
 class RenderStrategyFactory(StrategyFactory[RenderStrategy]):
+    defaults_set_up: ClassVar[bool] = False
+
     @classmethod
     def add_defaults(cls) -> None:
+        if cls.defaults_set_up:
+            return
+
         cls.add("Default", RenderBoardToScreen)
         cls.add("BigBoard", RenderBigBoardToScreen)
         cls.add("Null", NullRender)
         cls.add("None", NullRender)
+
+        cls.defaults_set_up = True

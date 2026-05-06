@@ -4,8 +4,8 @@ import pytest
 from hamcrest import assert_that, equal_to, has_string, is_, is_not
 
 import tictactoe.player as player
-from tictactoe.board import NullRender, RenderBoardToScreen
-from tictactoe.builders import PlayerBuilder
+from tictactoe.board import NullRender
+from tictactoe.factories import MoveStrategyFactory
 from tictactoe.player import Player
 
 """
@@ -106,11 +106,13 @@ def test_clone(create_players):
 
 
 def test_next_move():
-    bot_9001 = (
-        PlayerBuilder.builder()
-        .with_name("Tic-Tac-Toe Bot 9001")
-        .with_strategy(name="SetMoves", moves=list(range(1, 10)))
-        .build()
+    MoveStrategyFactory.add_defaults()
+    bot_9001 = Player(
+        name="Tic-Tac-Toe Bot 9001",
+        strategy=MoveStrategyFactory.create(
+            "SetMoves", moves=list(range(1, 10))
+        ),
+        preferred_renderer=NullRender,
     )
 
     for expected_move in range(1, 10):

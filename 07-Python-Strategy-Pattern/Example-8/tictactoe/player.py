@@ -1,10 +1,47 @@
+from __future__ import annotations
+
 import copy
 from dataclasses import dataclass, field
+from typing import ClassVar, Final, Protocol
 
-from .board import RenderStrategy
-from .strategy import MoveStrategy
+from .board import NullRender, RenderBigBoardToScreen, RenderStrategy
 
-DEFAULT_NAME: str = "I. C. Generic"
+
+class MoveStrategy(Protocol):
+    def next_move(self) -> int:
+        """
+        Retrieve the next move.
+        """
+
+
+@dataclass
+class KeyboardStrategy:
+    PROMPT_MSG: ClassVar[str] = "Enter your desired move (1-9): "
+
+    _name: str
+
+    def next_move(self) -> int:
+        print()
+        choice = int(input(f"{self._name}, {self.PROMPT_MSG}"))
+        print()
+
+        return choice
+
+
+class PredefinedMoves:
+    def __init__(self, *, moves: list[int]) -> None:
+        self.my_moves = moves
+        self.__move_idx = 0
+
+    def next_move(self) -> int:
+        my_next_move = self.my_moves[self.__move_idx]
+
+        self.__move_idx += 1
+
+        return my_next_move
+
+
+DEFAULT_NAME: Final[str] = "I. C. Generic"
 
 
 @dataclass(kw_only=True, unsafe_hash=True)
@@ -20,6 +57,24 @@ class Player:
     strategy: MoveStrategy = field(default=None, compare=False)  # type: ignore
     humanity: bool = field(default=False, compare=False)
     preferred_renderer: RenderStrategy = field(compare=False)
+
+    @staticmethod
+    def create_human(*, name: str) -> Player:
+        return Player(
+            name=name,
+            strategy=KeyboardStrategy(name),
+            humanity=True,
+            preferred_renderer=RenderBigBoardToScreen(),
+        )
+
+    @staticmethod
+    def create_computer(*, name: str, strategy: MoveStrategy) -> Player:
+        return Player(
+            name=name,
+            strategy=strategy,
+            humanity=False,
+            preferred_renderer=NullRender(),
+        )
 
     def next_move(self) -> int:
         """
@@ -48,8 +103,6 @@ class Player:
         """
         Is this a Computer Player?
 
-        In this discussion, always no :(
-
         Returns:
             True if the player is a Cylon
 
@@ -60,14 +113,14 @@ class Player:
     def get_render_preference(self) -> RenderStrategy:
         return self.preferred_renderer
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Generate a player string, but only the name.
         """
 
         return self.name
 
-    def __deepcopy__(self, memo) -> "Player":
+    def __deepcopy__(self, _memo: None) -> Player:
         """
         Create a new duplicate Player.
         """

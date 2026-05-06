@@ -7,9 +7,8 @@ This module handles the top-level game logic, including...
 4. Managing player move order and validation
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum, auto
-from typing import Optional
 
 from .board import Board
 from .player import Player
@@ -23,199 +22,108 @@ class GameStateError(Exception):
     """
 
 
-class GameState(StrEnum):
-    """
-    Used to specify the current state of the game (e.g., not started, in
-    progress, or complete)
-    """
+class CompletedGame:
+    @dataclass(kw_only=True)
+    class Win:
+        board: Board = field(compare=True)
 
-    NOT_STARTED = auto()
-    IN_PROGRESS = auto()
-    OVER_WITH_STALEMATE = auto()
-    OVER_WITH_WIN = auto()
-    OVER_WITH_FORFEIT = auto()
+        winner: Player = field(compare=True)
+        loser: Player = field(compare=True)
+
+        def __str__(self) -> str:
+            return f"Congratulations {self.winner.name}!"
+
+    @dataclass(kw_only=True)
+    class Stalemate:
+        board: Board = field(compare=True)
+
+        def __str__(self) -> str:
+            return "Stalemate..."
+
+    @dataclass(kw_only=True)
+    class Forfeit:
+        board: Board = field(compare=True)
+
+        winner: Player = field(compare=True)
+        loser: Player = field(compare=True)
+
+        def __str__(self) -> str:
+            return f"{self.loser.name} forfeited."
 
 
+class TurnResult(StrEnum):
+    WIN = auto()
+    STALEMATE = auto()
+    NOT_OVER_YET = auto()
+    FORFEIT = auto()
+
+
+@dataclass(kw_only=True)
 class Game:
     """
     Orchestrates a single match of Tic-Tac-Toe.
     """
 
-    def __init__(self, player1: Player, player2: Player) -> None:
-        self._board = Board()
-        self._ref = Referee(self._board)
+    board: Board = field(default_factory=Board)
 
-        self._player1: Player = player1
-        self._player2: Player = player2
+    player1: Player
+    player2: Player
 
-        self._winner: Optional[Player] = None
-        self._loser: Optional[Player] = None
+    def __post_init__(self) -> None:
+        self._ref = Referee(self.board)
 
-        self.state = GameState.NOT_STARTED
+    def __opponent_of(self, player: Player) -> Player:
+        if player is self.player1:
+            return self.player2
 
-    def play_match(self) -> None:
-        if not self.ready_to_start():
-            raise GameStateError("Player 1 *and** player 2 must be added")
+        return self.player1
 
-        self.state = GameState.IN_PROGRESS
+    def play_match(
+        self,
+    ) -> CompletedGame.Win | CompletedGame.Stalemate | CompletedGame.Forfeit:
 
-        """
-        while self.state == GameState.IN_PROGRESS:
-            self.player_turn(self._player1, "X")
-
-            if self.state != GameState.IN_PROGRESS:
-                break
-
-            self.player_turn(self._player2, "O")
-        """
-
-        while self.state == GameState.IN_PROGRESS:
-            players_and_symbols = ((self._player1, "X"), (self._player2, "O"))
+        while True:
+            players_and_symbols = ((self.player1, "X"), (self.player2, "O"))
 
             for player, symbol in players_and_symbols:
-                if self.state != GameState.IN_PROGRESS:
-                    break
+                player.get_render_preference().render(self.board)
 
-                self.player_turn(player, symbol)
+                match self._player_turn(player, symbol):
+                    case TurnResult.WIN:
+                        return CompletedGame.Win(
+                            board=self.board,
+                            winner=player,
+                            loser=self.__opponent_of(player),
+                        )
 
-    def player_turn(self, player: Player, symbol: str) -> None:
-        """
-        Play one round of Tic-Tac-Toe.
+                    case TurnResult.STALEMATE:
+                        player.get_render_preference().render(self.board)
 
-        Returns:
-            True if the game ended during the turn
+                        return CompletedGame.Stalemate(
+                            board=self.board,
+                        )
 
-        Raises:
-            IOException if there is an error reading the selected move
+                    case TurnResult.FORFEIT:
+                        raise NotImplementedError()
 
-        """
-        # The game ended already
-        if not self.ready_to_start() and self.state != GameState.IN_PROGRESS:
-            raise GameStateError()  # TODO: Add a test for this exception
+                    case _:
+                        # the only possibility left is NOT_OVER_YET... no op
+                        pass
 
-        self.state = GameState.IN_PROGRESS
-
-        player.get_render_preference().render(self._board)
-
-        self._handle_move(player, symbol)
-
-        if winner_symbol := self._ref.check_for_win():
-            self.state = GameState.OVER_WITH_WIN
-
-            self._winner = (
-                self._player1 if winner_symbol == "X" else self._player2
-            )
-            self._loser = (
-                self._player2 if winner_symbol == "X" else self._player1
-            )
-
-        elif self._board.is_full():
-            self.state = GameState.OVER_WITH_STALEMATE
-
-            player.get_render_preference().render(self._board)
-
-    def _handle_move(self, player: Player, symbol: str) -> None:
-        """
-        Get a player move, and update the board.
-
-        If a player provides an invalid move... keep reprompting until a valid
-        move is provided.
-        """
-        move = player.next_move()
-
-        while not self._ref.selected_cell_is_empty(move):
+    def _player_turn(self, player: Player, symbol: str) -> TurnResult:
+        # Get a move and re-prompt if the move is invalid
+        while True:
             move = player.next_move()
 
-        self._board.set_cell(move, symbol)
+            if self._ref.selected_cell_is_empty(move):
+                break
 
-    # --------------------------------------------------------------------------
-    # Game Component (board and player) accessors
-    # --------------------------------------------------------------------------
+        self.board.set_cell(move, symbol)
 
-    def get_player1(self) -> Player:
-        return self._player1
+        if self._ref.check_for_win():
+            return TurnResult.WIN
 
-    def get_player2(self) -> Player:
-        return self._player2
+        if self.board.is_full():
+            return TurnResult.STALEMATE
 
-    def get_board(self) -> Board:
-        return self._board
-
-    def get_winner(self) -> Optional[Player]:
-        return self._winner
-
-    def get_loser(self) -> Optional[Player]:
-        return self._loser
-
-    # --------------------------------------------------------------------------
-    # Game State Examination
-    # --------------------------------------------------------------------------
-
-    def ready_to_start(self) -> bool:
-        if self._player1 is None or self._player2 is None:
-            return False
-
-        return True
-
-    def not_ready_to_start(self) -> bool:
-        return not self.ready_to_start()
-
-    def ended_with_win(self) -> bool:
-        return self._winner is not None
-
-    def ended_with_loss(self) -> bool:
-        return self.state == GameState.OVER_WITH_WIN
-
-    def ended_with_stalemate(self) -> bool:
-        return self.state == GameState.OVER_WITH_STALEMATE
-
-    def is_over(self) -> bool:
-        return self.ended_with_win() or self.ended_with_stalemate()
-
-    def is_not_over(self) -> bool:
-        return not self.is_over()
-
-    def current_state(self) -> GameState:
-        return self.state
-
-    def __str__(self) -> str:
-        match self.current_state():
-            case GameState.OVER_WITH_WIN:
-                return f"Congratulations {self._winner.name}!"
-
-            case GameState.OVER_WITH_STALEMATE:
-                return "Stalemate..."
-
-            case GameState.OVER_WITH_FORFEIT:
-                return f"{self._loser.name} forfeited."
-
-            case _:
-                pass
-
-        return "Game is in progress."
-
-
-@dataclass(kw_only=True)
-class CompletedGame:
-    board: Board
-
-    winner: Optional[Player] = None
-    loser: Optional[Player] = None
-
-    state = GameState.NOT_STARTED
-
-    def __str__(self) -> str:
-        match self.state:
-            case GameState.OVER_WITH_WIN:
-                return f"Congratulations {self.winner.name}!"
-
-            case GameState.OVER_WITH_STALEMATE:
-                return "Stalemate..."
-
-            case GameState.OVER_WITH_FORFEIT:
-                return f"{self.loser.name} forfeited."
-
-            case _:
-                raise GameStateError()
-
-        return "Error"
+        return TurnResult.NOT_OVER_YET

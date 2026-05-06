@@ -16,12 +16,10 @@ def empty_board_and_ref():
 def test_constructor(empty_board_and_ref):
     _, a_referee = empty_board_and_ref
 
-    assert_that(a_referee.check_for_win(), is_(none()))
-
     for idx in range(1, 10):
         assert_that(a_referee.selected_cell_is_empty(idx), is_(True))
 
-    assert_that(a_referee.check_for_win(), is_(none()))
+    assert_that(a_referee.check_for_win(), is_(False))
 
 
 def test_check_for_horizontal_win(empty_board_and_ref):
@@ -34,7 +32,7 @@ def test_check_for_horizontal_win(empty_board_and_ref):
     assert_that(h_referee.selected_cell_is_empty(5), is_(False))
     assert_that(h_referee.selected_cell_is_empty(6), is_(False))
 
-    assert_that(h_referee.check_for_win(), is_("X"))
+    assert_that(h_referee.check_for_win(), is_(True))
 
 
 def test_check_for_vertical_win(empty_board_and_ref):
@@ -47,7 +45,7 @@ def test_check_for_vertical_win(empty_board_and_ref):
     assert_that(v_referee.selected_cell_is_empty(5), is_(False))
     assert_that(v_referee.selected_cell_is_empty(8), is_(False))
 
-    assert_that(v_referee.check_for_win(), is_("O"))
+    assert_that(v_referee.check_for_win(), is_(True))
 
 
 def test_check_for_diagonal_win(empty_board_and_ref):
@@ -60,4 +58,4 @@ def test_check_for_diagonal_win(empty_board_and_ref):
     assert_that(d_referee.selected_cell_is_empty(5), is_(False))
     assert_that(d_referee.selected_cell_is_empty(7), is_(False))
 
-    assert_that(d_referee.check_for_win(), is_("O"))
+    assert_that(d_referee.check_for_win(), is_(True))
