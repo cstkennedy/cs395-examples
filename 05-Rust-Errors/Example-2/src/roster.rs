@@ -32,7 +32,7 @@ impl Roster {
     }
 
     pub fn enroll(&mut self, stu: Student) -> bool {
-        // todo: replace bool with Result and EnrollError enum 
+        // todo: replace bool with Result and EnrollError enum
         if self.students.len() == self.enroll_limit {
             return false;
         }

@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate lazy_static;
-
 pub mod point2d;
 pub mod traits;
 

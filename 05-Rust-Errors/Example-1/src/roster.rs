@@ -53,7 +53,7 @@ impl<'a> Roster<'a> {
         self.students.len()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Student> {
+    pub fn iter(&self) -> impl Iterator<Item = &Student<'_>> {
         self.students.iter()
     }
 }

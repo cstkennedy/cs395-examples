@@ -1,8 +1,10 @@
 use std::ops::Add;
 use std::ops::Sub;
 
-use super::traits::PointOps;
 use num_traits::Float;
+
+use super::traits::PointOps;
+
 
 /// A Point in 2-D Cartesian Coordinates.
 #[derive(Debug, Clone, Copy)]

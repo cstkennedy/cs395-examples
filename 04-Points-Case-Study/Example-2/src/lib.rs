@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate lazy_static;
-
 use std::ops::Add;
 use std::ops::Sub;
 
@@ -64,7 +61,7 @@ where
 {
     type Output = Point2D<T>;
 
-    fn sub(self, rhs: Self) -> Self {
+    fn sub(self, rhs: Self) -> Self::Output {
         Point2D {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
