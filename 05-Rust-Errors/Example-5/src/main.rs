@@ -1,7 +1,9 @@
+use eyre::{OptionExt, Result, WrapErr};
+
 use enroll_students::error::{EnrollError, RosterError};
 use enroll_students::prelude::{Roster, Student};
 
-fn main() {
+fn main() -> Result<()> {
     let all_students = [
         Student::new("John"),
         Student::new("Tom"),
@@ -9,18 +11,33 @@ fn main() {
         Student::new("Oscar"),
     ];
 
-    let mut cs330 = Roster::new(3, "CS 330");
-    enroll_everyone(&mut cs330, all_students);
+    let arg: String = std::env::args()
+        .nth(1)
+        .ok_or_eyre("No capacity was provided")?;
+
+    let cap = arg
+        .parse()
+        .wrap_err_with(|| format!("'{arg}' is not a valid usize"))?;
+
+    let (logged_messages, cs330) = enroll_everyone(Roster::new(cap, "CS 330"), all_students);
+
+    for message in logged_messages {
+        println!("{}", message);
+    }
 
     println!();
     println!("{cs330}");
+
+    Ok(())
 }
 
 fn enroll_everyone(
-    roster: &mut Roster,
+    mut roster: Roster,
     all_students: impl std::iter::IntoIterator<Item = Student>,
-) {
+) -> (Vec<String>, Roster) {
     let course_num = roster.course_num.clone();
+
+    let mut messages = Vec::new();
 
     for stu in all_students.into_iter() {
         let name = stu.name.clone();
@@ -41,6 +58,8 @@ fn enroll_everyone(
                 )
             }
         };
-        println!("{}", message);
+        messages.push(message);
     }
+
+    (messages, roster)
 }

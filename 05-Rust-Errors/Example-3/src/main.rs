@@ -1,3 +1,4 @@
+use enroll_students::error::{EnrollError, RosterError};
 use enroll_students::prelude::{Roster, Student};
 
 fn main() {
@@ -10,13 +11,18 @@ fn main() {
 
     let mut cs330 = Roster::new(3, "CS 330");
 
+    let course_num = cs330.course_num.clone();
     for stu in all_students.into_iter() {
-        let course_num = cs330.course_num.clone();
         let name = stu.name.clone();
 
         let message = match cs330.enroll(stu) {
             Ok(_) => format!("{name} enrolled in {course_num}"),
-            Err(_) => format!("{name} NOT enrolled in {course_num}"),
+            // Err(_) => format!("{name} NOT enrolled in {course_num}"),
+            Err(enroll_error) => [
+                format!("{name} NOT enrolled in {course_num}"),
+                format!("  {}", enroll_error),
+            ]
+            .join("\n"),
         };
         println!("{}", message);
     }

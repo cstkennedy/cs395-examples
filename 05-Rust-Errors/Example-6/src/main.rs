@@ -19,8 +19,11 @@ fn main() -> Result<()> {
         .parse()
         .wrap_err_with(|| format!("'{arg}' is not a valid usize"))?;
 
-    let mut cs330 = Roster::new(cap, "CS 330");
-    enroll_everyone(&mut cs330, all_students);
+    let (logged_messages, cs330) = enroll_everyone(Roster::new(cap, "CS 330"), all_students);
+
+    for message in logged_messages {
+        println!("{}", message);
+    }
 
     println!();
     println!("{cs330}");
@@ -29,30 +32,36 @@ fn main() -> Result<()> {
 }
 
 fn enroll_everyone(
-    roster: &mut Roster,
+    mut roster: Roster,
     all_students: impl std::iter::IntoIterator<Item = Student>,
-) {
+) -> (Vec<String>, Roster) {
     let course_num = roster.course_num.clone();
 
-    for stu in all_students.into_iter() {
-        let name = stu.name.clone();
+    let messages = all_students
+        .into_iter()
+        .map(|stu| {
+            let name = stu.name.clone();
 
-        let message = match roster.enroll(stu) {
-            Ok(_) => format!("{name} enrolled in {course_num}"),
-            Err(roster_error) => {
-                let student = roster_error.the_value;
+            let message = match roster.enroll(stu) {
+                Ok(_) => format!("{name} enrolled in {course_num}"),
+                Err(roster_error) => {
+                    let student = roster_error.the_value;
 
-                format!(
-                    "{} NOT enrolled in {course_num} ({})",
-                    student,
-                    match roster_error.the_error {
-                        EnrollError::AlreadyRegistered => "Already Enrolled",
-                        EnrollError::SectionFull { .. } => "Full",
-                        _ => "Unknown Error",
-                    }
-                )
-            }
-        };
-        println!("{}", message);
-    }
+                    format!(
+                        "{} NOT enrolled in {course_num} ({})",
+                        student,
+                        match roster_error.the_error {
+                            EnrollError::AlreadyRegistered => "Already Enrolled",
+                            EnrollError::SectionFull { .. } => "Full",
+                            _ => "Unknown Error",
+                        }
+                    )
+                }
+            };
+
+            message
+        })
+        .collect();
+
+    (messages, roster)
 }

@@ -37,29 +37,27 @@ fn enroll_everyone(
 ) -> (Vec<String>, Roster) {
     let course_num = roster.course_num.clone();
 
-    let mut messages = Vec::new();
+    let messages = all_students
+        .into_iter()
+        .map(|stu| {
+            let name = stu.name.clone();
 
-    for stu in all_students.into_iter() {
-        let name = stu.name.clone();
-
-        let message = match roster.enroll(stu) {
-            Ok(_) => format!("{name} enrolled in {course_num}"),
-            Err(roster_error) => {
-                let student = roster_error.the_value;
-
-                format!(
-                    "{} NOT enrolled in {course_num} ({})",
-                    student,
-                    match roster_error.the_error {
-                        EnrollError::AlreadyRegistered => "Already Enrolled",
-                        EnrollError::SectionFull { .. } => "Full",
-                        _ => "Unknown Error",
-                    }
-                )
+            match roster.enroll(stu) {
+                Ok(_) => format!("{name} enrolled in {course_num}"),
+                Err(roster_error) => {
+                    format!(
+                        "{} NOT enrolled in {course_num} ({})",
+                        roster_error.the_value,
+                        match roster_error.the_error {
+                            EnrollError::AlreadyRegistered => "Already Enrolled",
+                            EnrollError::SectionFull { .. } => "Full",
+                            _ => "Unknown Error",
+                        }
+                    )
+                }
             }
-        };
-        messages.push(message);
-    }
+        })
+        .collect();
 
     (messages, roster)
 }

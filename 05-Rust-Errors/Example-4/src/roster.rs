@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::fmt;
 
-use crate::error::EnrollError;
+use crate::error::{EnrollError, RosterError};
 use crate::student::Student;
 
 pub const DEFAULT_MAX_STUDENTS: usize = 10;
@@ -32,16 +32,19 @@ impl Roster {
         }
     }
 
-    pub fn enroll<'a>(&'a mut self, stu: Student) -> Result<(), EnrollError<'a>> {
+    pub fn enroll<'a>(&'a mut self, stu: Student) -> Result<(), RosterError<'a>> {
         if self.students.len() == self.enroll_limit {
-            return Err(EnrollError::SectionFull {
-                course_num: &self.course_num,
-                cap: self.enroll_limit,
+            return Err(RosterError{
+                the_error: EnrollError::SectionFull {
+                    course_num: &self.course_num,
+                    cap: self.enroll_limit,
+                },
+                the_value: stu
             });
         }
 
         if self.students.contains(&stu) {
-            return Err(EnrollError::AlreadyRegistered);
+            return Err(RosterError{the_error: EnrollError::AlreadyRegistered, the_value: stu});
         }
 
         self.students.insert(stu);
@@ -63,11 +66,13 @@ impl Roster {
 
 impl fmt::Display for Roster {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let percent_full = 100.0 * (self.num_enrolled() / self.enroll_limit) as f64;
+        // BUG: Integer arithmetic
+        // let percent_full = 100.0 * (self.num_enrolled() as f64 / self.enroll_limit) as f64;
+        let percent_full = 100.0 * (self.num_enrolled() as f64 / self.enroll_limit as f64) ;
 
         writeln!(
             f,
-            "{} -> {} of {} ({}% full)",
+            "{} -> {} of {} ({:.0}% full)",
             self.course_num,
             self.num_enrolled(),
             self.enroll_limit,
