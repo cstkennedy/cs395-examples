@@ -58,7 +58,7 @@ impl Parser {
     ///
     ///   * `filename` - file from which to read
     ///   * `parse_fn` - parsing function to use
-    pub fn read_from_file<T, F>(filename: &str, parse_fn: F) -> Result<T, ParserError>
+    pub fn from_file<T, F>(filename: &str, parse_fn: F) -> Result<T, ParserError>
     where
         F: Fn(BufReader<File>) -> T,
     {
