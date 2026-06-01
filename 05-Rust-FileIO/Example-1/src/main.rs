@@ -42,7 +42,6 @@ fn main() -> eyre::Result<()> {
         Parser::read_rosters(ins)
     };
 
-
     let populated_rosters: Vec<Roster> = all_rosters
         .into_iter()
         .map(|roster| enroll_everyone(roster, all_students.clone()))
