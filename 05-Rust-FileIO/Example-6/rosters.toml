@@ -1,0 +1,12 @@
+
+[[course]]
+name = "CS 330"
+capacity = 10
+
+[[course]]
+name = "CS 395"
+capacity = 3
+
+[[course]]
+name = "CS 417"
+capacity = 40

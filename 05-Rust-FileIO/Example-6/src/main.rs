@@ -1,7 +1,11 @@
+use std::fs::File;
+use std::io::prelude::*;
+
 use clap::Parser;
 use eyre::WrapErr;
+use toml;
 
-use enroll_students::prelude::{Parser as RosterParser, Roster, Student, register};
+use enroll_students::prelude::{Parser as RosterParser, Roster, Student, register, parser};
 
 #[derive(Parser)]
 #[command(version, about)]
@@ -16,9 +20,24 @@ struct Args {
 fn main() -> eyre::Result<()> {
     let args = Args::parse();
 
+    /*
+    let all_students =
+        RosterParser::from_file(&args.student_filename, |buf| RosterParser::read_students(buf))?;
+    */
+
+    // read_students already takes a single argument
     let all_students =
         RosterParser::from_file(&args.student_filename, RosterParser::read_students)?;
-    let all_rosters = RosterParser::from_file(&args.roster_filename, RosterParser::read_rosters)?;
+
+    // read_rosters already takes a single argument
+    /*
+    // Roster - text file
+    let all_rosters =
+        RosterParser::from_file(&args.roster_filename, RosterParser::read_rosters)?;
+    */
+
+    // Roster - toml file
+    let all_rosters = RosterParser::read_rosters_from_toml(&args.roster_filename)?;
 
     /*
     let (combined_messages, populated_rosters): (Vec<Vec<register::EnrollResult>>, Vec<Roster>) =
