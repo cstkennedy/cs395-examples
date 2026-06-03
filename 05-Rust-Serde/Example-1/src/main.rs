@@ -16,7 +16,10 @@ enum FileFormat {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 enum OutputFormat {
     Text,
-    Toml
+    Toml,
+    Yaml,
+    Json,
+    Ron
 }
 
 #[derive(Parser)]
@@ -38,8 +41,14 @@ struct Args {
 }
 
 #[derive(Serialize)]
-pub struct AllRosters {
+pub struct PopulatedRosters {
     rosters: Vec<Roster>,
+}
+
+impl PopulatedRosters {
+    pub fn iter(&self) -> impl std::iter::Iterator<Item=&Roster> {
+        self.rosters.iter()
+    }
 }
 
 fn main() -> eyre::Result<()> {
@@ -70,6 +79,10 @@ fn main() -> eyre::Result<()> {
         log::info!("{message}");
     }
 
+    let populated_rosters = PopulatedRosters {
+        rosters: populated_rosters,
+    };
+
     match args.output_format {
         OutputFormat::Text => {
             for roster in populated_rosters.iter() {
@@ -78,12 +91,26 @@ fn main() -> eyre::Result<()> {
             }
         },
         OutputFormat::Toml => {
-            let populated_rosters = AllRosters {
-                rosters: populated_rosters,
-            };
-
             let rosters_as_toml = toml::to_string(&populated_rosters)?;
             println!("{}", rosters_as_toml);
+        },
+        OutputFormat::Yaml => {
+            println!(
+                "{:#}",
+                serde_yml::to_string(&populated_rosters)?,
+            );
+        }
+        OutputFormat::Json => {
+            println!(
+                "{:#}",
+                serde_json::to_string_pretty(&populated_rosters)?,
+            );
+        }
+        OutputFormat::Ron => {
+            println!(
+                "{}",
+                ron::ser::to_string_pretty(&populated_rosters, ron::ser::PrettyConfig::default())?,
+            );
         }
     }
 
