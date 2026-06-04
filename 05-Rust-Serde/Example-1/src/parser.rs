@@ -4,7 +4,7 @@ use std::io::BufReader;
 use std::io::Read;
 use std::str::FromStr;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::error::ParserError;
 use crate::prelude::{Roster, Student};
@@ -114,7 +114,8 @@ impl Parser {
 
         // println!("{:#?}", all_empty_rosters);
 
-        let all_rosters = all_empty_rosters.courses
+        let all_rosters = all_empty_rosters
+            .courses
             .into_iter()
             .map(Roster::from)
             .collect();
@@ -126,7 +127,7 @@ impl Parser {
 #[derive(Debug, Deserialize)]
 pub struct EmptyRoster {
     pub name: String,
-    pub capacity: usize
+    pub capacity: usize,
 }
 
 impl From<EmptyRoster> for Roster {
@@ -138,5 +139,5 @@ impl From<EmptyRoster> for Roster {
 #[derive(Debug, Deserialize)]
 pub struct EmptyRosters {
     #[serde(rename = "course")]
-    pub courses: Vec<EmptyRoster>
+    pub courses: Vec<EmptyRoster>,
 }

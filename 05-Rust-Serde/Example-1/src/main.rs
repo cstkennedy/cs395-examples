@@ -1,16 +1,19 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 
+use itertools::Itertools; // avoid temp Vec<String> when using join
 use log;
-use toml;
 use serde::Serialize;
+use serde_toon;
+use serde_xml_rs;
+use toml;
 
 use enroll_students::prelude::{Parser as RosterParser, Roster, Student, register};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 enum FileFormat {
     Text,
-    Toml
+    Toml,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
@@ -19,7 +22,9 @@ enum OutputFormat {
     Toml,
     Yaml,
     Json,
-    Ron
+    Ron,
+    Toon,
+    Xml,
 }
 
 #[derive(Parser)]
@@ -37,7 +42,7 @@ struct Args {
 
     /// output location and format
     #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
-    output_format: OutputFormat
+    output_format: OutputFormat,
 }
 
 #[derive(Serialize)]
@@ -46,7 +51,7 @@ pub struct PopulatedRosters {
 }
 
 impl PopulatedRosters {
-    pub fn iter(&self) -> impl std::iter::Iterator<Item=&Roster> {
+    pub fn iter(&self) -> impl std::iter::Iterator<Item = &Roster> {
         self.rosters.iter()
     }
 }
@@ -60,10 +65,8 @@ fn main() -> eyre::Result<()> {
     let all_rosters = match args.roster_format {
         FileFormat::Text => {
             RosterParser::from_file(&args.roster_filename, RosterParser::read_rosters)?
-        },
-        FileFormat::Toml => {
-            RosterParser::read_rosters_from_toml(&args.roster_filename)?
         }
+        FileFormat::Toml => RosterParser::read_rosters_from_toml(&args.roster_filename)?,
     };
 
     if all_rosters.len() == 0 {
@@ -85,32 +88,38 @@ fn main() -> eyre::Result<()> {
 
     match args.output_format {
         OutputFormat::Text => {
+            /*
             for roster in populated_rosters.iter() {
                 println!();
                 print!("{roster}");
             }
-        },
+            */
+            println!(
+                "{}",
+                populated_rosters.iter().map(Roster::to_string).join("\n")
+            );
+        }
         OutputFormat::Toml => {
             let rosters_as_toml = toml::to_string(&populated_rosters)?;
             println!("{}", rosters_as_toml);
-        },
+        }
         OutputFormat::Yaml => {
-            println!(
-                "{:#}",
-                serde_yml::to_string(&populated_rosters)?,
-            );
+            println!("{:#}", serde_yml::to_string(&populated_rosters)?,);
         }
         OutputFormat::Json => {
-            println!(
-                "{:#}",
-                serde_json::to_string_pretty(&populated_rosters)?,
-            );
+            println!("{:#}", serde_json::to_string_pretty(&populated_rosters)?,);
         }
         OutputFormat::Ron => {
             println!(
                 "{}",
                 ron::ser::to_string_pretty(&populated_rosters, ron::ser::PrettyConfig::default())?,
             );
+        }
+        OutputFormat::Toon => {
+            println!("{}", serde_toon::to_string_pretty(&populated_rosters)?);
+        }
+        OutputFormat::Xml => {
+            println!("{}", serde_xml_rs::to_string(&populated_rosters)?);
         }
     }
 
