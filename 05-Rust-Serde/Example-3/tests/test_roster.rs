@@ -183,12 +183,7 @@ fn test_enroll(default_courses: (Roster, Roster), students_and_lists: StudentLis
     */
     assert_that!(
         cs725.list_enrolled_students(),
-        contains(
-            first_three_students
-                .iter()
-                .cloned()
-                .collect::<Vec<_>>()
-        )
+        contains(first_three_students.iter().cloned().collect::<Vec<_>>())
     );
 
     // assert_that!(hash(cs725), is_not(equal_to(old_hash_code)));
