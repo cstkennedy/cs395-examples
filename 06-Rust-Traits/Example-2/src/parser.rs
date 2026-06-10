@@ -1,0 +1,151 @@
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
+use std::io::Read;
+use std::str::FromStr;
+
+use crate::error::ParserError;
+use crate::prelude::{EmptyRoster, Student};
+use crate::roster::EmptyRosters;
+
+impl FromStr for Student {
+    type Err = ParserError;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+        // Trim the line before length check
+        let name = line.trim();
+
+        if name.len() < 3 {
+            return Err(ParserError::NameTooShortError {
+                name: name.to_owned(),
+            });
+        }
+
+        Ok(Student::new(name))
+    }
+}
+
+impl FromStr for EmptyRoster {
+    type Err = ParserError;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+        let tokens: Vec<_> = line
+            .split(";")
+            .map(|token| token.trim().to_owned())
+            .collect();
+
+        if tokens.len() != 2 {
+            return Err(ParserError::WrongNumberOfTokens { tokens });
+        }
+
+        let name = tokens[0].to_owned();
+        let cap = tokens[1].parse::<usize>().unwrap_or(0);
+
+        if cap == 0 {
+            return Err(ParserError::NotPostiveNumberError {
+                raw_num: cap.to_string(),
+            });
+        }
+
+        Ok(EmptyRoster::new(cap, &name))
+    }
+}
+
+/// Open a file and read in data based on a supplied closure
+///
+/// # Arguments
+///
+///   * `filename` - file from which to read
+///   * `parse_fn` - parsing function to use
+pub(crate) fn from_file<T, F>(filename: &str, parse_fn: F) -> Result<T, ParserError>
+where
+    F: Fn(BufReader<File>) -> T,
+{
+    let file = File::open(filename)?;
+    let ins = BufReader::new(file);
+    let all_things = parse_fn(ins);
+
+    Ok(all_things)
+}
+
+pub trait Parser {
+    type Item;
+    type Error;
+}
+
+pub trait PlainTextParser: Parser {
+    fn read_items(filename: &str) -> Result<Vec<Self::Item>, Self::Error>;
+}
+
+pub trait TomlParser: Parser {
+    fn read_items(filename: &str) -> Result<Vec<Self::Item>, Self::Error>;
+}
+
+pub struct StudentParser;
+
+impl StudentParser {
+    /// Read Student names from an input buffer.
+    ///
+    /// # Arguments
+    ///
+    ///  * `ins` - input source
+    ///
+    pub fn read_students<B: BufRead>(ins: B) -> Vec<Student> {
+        ins.lines()
+            .flatten()
+            .flat_map(|line| line.parse())
+            .collect()
+    }
+}
+
+impl Parser for StudentParser {
+    type Item = Student;
+    type Error = ParserError;
+}
+
+impl PlainTextParser for StudentParser {
+    fn read_items(filename: &str) -> Result<Vec<Self::Item>, ParserError> {
+        from_file(filename, Self::read_students)
+    }
+}
+
+pub struct RosterParser;
+
+impl RosterParser {
+    /// Create rosters from an input buffer.
+    ///
+    /// # Arguments
+    ///
+    ///  * `ins` - input source
+    ///
+    pub fn read_rosters<B: BufRead>(ins: B) -> Vec<EmptyRoster> {
+        ins.lines()
+            .flatten()
+            .flat_map(|line| line.parse())
+            .collect()
+    }
+}
+
+impl Parser for RosterParser {
+    type Item = EmptyRoster;
+    type Error = ParserError;
+}
+
+impl PlainTextParser for RosterParser {
+    fn read_items(filename: &str) -> Result<Vec<Self::Item>, ParserError> {
+        from_file(filename, Self::read_rosters)
+    }
+}
+
+impl TomlParser for RosterParser {
+    fn read_items(filename: &str) -> Result<Vec<Self::Item>, ParserError> {
+        let mut toml_file = File::open(filename)?;
+        let mut toml_str = String::new();
+
+        toml_file.read_to_string(&mut toml_str)?;
+
+        let all_empty_rosters: EmptyRosters = toml::from_str(&toml_str)?;
+
+        Ok(all_empty_rosters.courses)
+    }
+}
