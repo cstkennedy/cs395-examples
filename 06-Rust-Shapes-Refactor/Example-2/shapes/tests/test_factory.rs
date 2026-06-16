@@ -9,22 +9,25 @@ use shapes::right_triangle::RightTriangle;
 use shapes::square::Square;
 use shapes::triangle::Triangle;
 
-#[test]
-fn test_is_known() {
-    assert!(Factory::is_known("Circle"));
-    assert!(Factory::is_known("Square"));
-    assert!(Factory::is_known("Triangle"));
-    assert!(Factory::is_known("Right Triangle"));
-    assert!(Factory::is_known("Equilateral Triangle"));
+use rstest::rstest;
+
+#[rstest]
+#[case::Circle("Circle")]
+#[case::Square("Square")]
+#[case::Triangle("Triangle")]
+#[case::RightTriangle("Right Triangle")]
+#[case::EquilateralTriangle("Equilateral Triangle")]
+fn test_is_known(#[case] shape_name: &str) {
+    assert!(Factory::is_known(shape_name));
 }
 
-#[test]
+#[rstest]
 fn test_number_known() {
     assert_that!(Factory::number_known(), is(equal_to(5)));
 }
 
-#[test]
-fn test_str() {
+#[rstest]
+fn test_list_known_contains() {
     let f_str = Factory::list_known();
 
     assert!(f_str.contains("  Circle"));
@@ -34,12 +37,12 @@ fn test_str() {
     assert!(f_str.contains("  Equilateral Triangle"));
 }
 
-#[test]
+#[rstest]
 fn test_create() {
     // I need to write this test...
 }
 
-#[test]
+#[rstest]
 fn test_create_with() {
     let a_shape = Factory::create_with("Triangle", &[3.0, 4.0, 5.0]).unwrap();
     let ref_shape = Triangle::new(3.0, 4.0, 5.0);
