@@ -105,8 +105,6 @@ impl TryFrom<&[f64]> for Square {
     type Error = CreationError;
 
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
-        eprintln!("{:?}", dims);
-
         if dims.len() != 1 {
             return Err(CreationError::DimensionCountError {
                 name: "Square".to_owned(),

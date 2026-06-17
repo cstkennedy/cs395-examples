@@ -1,0 +1,10 @@
+Circle; 6.7825
+Equilateral Triangle; 7.0952
+Right Triangle; 4.4152 7.8998
+LOL Not a Shape; 1 2 3 4 5
+Triangle; 6.0440 0.7209 9.6819
+Equilateral Triangle; 7.6122
+Triangle; 5.1258 3.4946 1.0305
+Equilateral Triangle; 0.9191
+Triangle; 8.0404 8.8299 1.1838
+Square; 1.1021

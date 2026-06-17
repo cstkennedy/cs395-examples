@@ -1,0 +1,63 @@
+use crate::factory::{CreationFactory, Factory};
+use crate::shape::Shape;
+
+use std::io::BufRead;
+
+pub struct Parser<F> {
+    factory: std::marker::PhantomData<F>,
+}
+
+impl<F> Parser<F>
+where
+    F: CreationFactory,
+{
+    /// Create shapes based on names from an input buffer.
+    ///
+    /// # Arguments
+    ///
+    ///  * `ins` - input source
+    ///
+    pub fn read_shapes<B: BufRead>(ins: B) -> Vec<F::Item> {
+        ins.lines()
+            .flatten()
+            .flat_map(|line| {
+                let name = line.trim();
+                F::create_default(name)
+            })
+            .collect()
+    }
+
+    /// Create shapes based on names *and dimension data* from an input buffer.
+    ///
+    /// # Arguments
+    ///
+    ///  * `ins` - input source
+    ///
+    pub fn read_shapes_with<B>(ins: B) -> Vec<F::Item>
+    where
+        B: BufRead,
+    {
+        ins.lines()
+            .flatten()
+            .filter(|line| line.len() > 0)
+            .map(|line| {
+                line.trim()
+                    .split(";")
+                    .map(String::from)
+                    .collect::<Vec<String>>()
+            })
+            .filter(|split_line| split_line.len() == 2)
+            .flat_map(|split_line| {
+                let name = &split_line[0];
+
+                let dims = &split_line[1]
+                    .split_whitespace()
+                    .filter(|s| !s.is_empty())
+                    .flat_map(|dim| dim.trim().parse())
+                    .collect::<Vec<f64>>();
+
+                F::create_with(&name, &dims)
+            })
+            .collect()
+    }
+}
