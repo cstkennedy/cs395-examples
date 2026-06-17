@@ -1,5 +1,5 @@
 // use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use divan::{black_box, Bencher};
+use divan::{Bencher, black_box};
 
 use shapes::prelude::Factory;
 
@@ -8,7 +8,6 @@ use shapes::equilateral_triangle::EquilateralTriangle;
 use shapes::right_triangle::RightTriangle;
 use shapes::square::Square;
 use shapes::triangle::Triangle;
-
 
 const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
     (&"Triangle", &[3.0, 4.0, 5.0]),
