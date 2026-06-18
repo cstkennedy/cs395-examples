@@ -6,6 +6,7 @@ use shapes::prelude::Parser as ShapeParser;
 use shapes::prelude::{Factory, Shape};
 
 use shapes::factory::FactoryDirectory;
+use shapes::monoshape::MonoFactory;
 
 use std::cell::LazyCell;
 use std::fs::File;
@@ -88,7 +89,7 @@ fn main() -> eyre::Result<()> {
             .wrap_err_with(|| format!("Could not open '{}", cli.shapes_filename))?;
 
         let ins = BufReader::new(file);
-        ShapeParser::<Factory>::read_shapes_with(ins)
+        ShapeParser::<MonoFactory>::read_shapes_with(ins)
     };
 
     if shapes.len() == 0 {

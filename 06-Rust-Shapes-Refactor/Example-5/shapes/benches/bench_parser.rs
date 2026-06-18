@@ -3,9 +3,10 @@ use std::io::BufReader;
 use divan::{Bencher, black_box};
 
 use shapes::factory::{CreationFactory, Factory, FactoryDirectory};
+use shapes::monoshape::MonoFactory;
 use shapes::prelude::Parser;
 
-#[divan::bench(min_time = 1, types = [Factory])]
+#[divan::bench(min_time = 1, types = [Factory, MonoFactory])]
 fn bench_read_shapes<F>()
 where
     F: CreationFactory,
@@ -24,7 +25,7 @@ where
     let some_shapes = Parser::<F>::read_shapes(black_box(str_reader));
 }
 
-#[divan::bench(min_time = 1, types = [Factory])]
+#[divan::bench(min_time = 1, types = [Factory, MonoFactory])]
 fn test_bench_shapes_with<F>()
 where
     F: CreationFactory,

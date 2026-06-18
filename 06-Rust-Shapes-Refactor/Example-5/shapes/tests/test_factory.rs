@@ -4,6 +4,8 @@ use hamcrest2::prelude::*;
 use shapes::factory::{CreationFactory, FactoryDirectory};
 use shapes::prelude::Factory;
 
+use shapes::monoshape::MonoFactory;
+
 use shapes::circle::Circle;
 use shapes::equilateral_triangle::EquilateralTriangle;
 use shapes::right_triangle::RightTriangle;
@@ -19,6 +21,7 @@ fn test_create_default_success() {
 
 #[rstest]
 #[case::Factory(Factory)]
+#[case::MonoFactory(MonoFactory)]
 fn test_create_default_failure<F>(#[case] _case: F)
 where
     F: CreationFactory,
@@ -30,6 +33,7 @@ where
 
 #[rstest]
 #[case::Factory(Factory)]
+#[case::MonoFactory(MonoFactory)]
 fn test_create_with_circle<F>(#[case] _case: F)
 where
     F: CreationFactory,
