@@ -1,4 +1,4 @@
-use crate::factory::{CreationFactory};
+use crate::factory::CreationFactory;
 
 use std::io::BufRead;
 use std::str::FromStr;

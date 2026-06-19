@@ -1,5 +1,5 @@
-use thiserror::Error;
 use compact_str::CompactString;
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum CreationError {
@@ -7,7 +7,10 @@ pub enum CreationError {
     UnknownShapeError(CompactString),
 
     #[error("{name:?} requires '{num_required}' dimension(s)")]
-    DimensionCountError { name: &'static str, num_required: usize },
+    DimensionCountError {
+        name: &'static str,
+        num_required: usize,
+    },
 
     #[error("{0}")]
     MalformedLineError(CompactString),

@@ -99,10 +99,7 @@ fn bench_create_with_invalid_dims<F>(name: &str)
 where
     F: CreationFactory,
 {
-    let _ = F::create_with(
-        black_box(&name),
-        black_box(&[1.0, 3.0, 5.0, 7.0, 8.0, 9.0]),
-    );
+    let _ = F::create_with(black_box(&name), black_box(&[1.0, 3.0, 5.0, 7.0, 8.0, 9.0]));
 }
 
 #[divan::bench(min_time = 1)]

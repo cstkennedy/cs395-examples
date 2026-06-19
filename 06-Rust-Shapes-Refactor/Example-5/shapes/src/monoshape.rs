@@ -120,9 +120,11 @@ impl FromStr for MonoShape {
         let split_line: Vec<&str> = line.trim().split(";").collect();
 
         if split_line.len() != 2 {
-            return Err(CreationError::MalformedLineError(compact_str::format_compact!(
-                "Line '{line}' did not have exactly one (1) semicolon"
-            )));
+            return Err(CreationError::MalformedLineError(
+                compact_str::format_compact!(
+                    "Line '{line}' did not have exactly one (1) semicolon"
+                ),
+            ));
         }
 
         let name = split_line[0];
