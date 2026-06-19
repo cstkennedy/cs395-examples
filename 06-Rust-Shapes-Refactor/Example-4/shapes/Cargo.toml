@@ -16,6 +16,10 @@ hamcrest2 = "*"
 rstest = "0.26.1"
 
 [[bench]]
+name = "bench_errors"
+harness = false
+
+[[bench]]
 name = "bench_factory"
 harness = false
 

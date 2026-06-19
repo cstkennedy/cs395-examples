@@ -17,7 +17,19 @@ const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
     (&"Square", &[5.0]),
 ];
 
-#[divan::bench(min_time = 1, args = ["Circle", "Square", "Triangle", "Right Triangle", "Equilateral Triangle"], types = [Factory, MonoFactory])]
+const SHAPE_NAMES: &'static [&str] = &[
+    &"Triangle",
+    &"Right Triangle",
+    &"Equilateral Triangle",
+    &"Circle",
+    &"Square",
+];
+
+#[divan::bench(
+    min_time = 1,
+    args = ["Circle", "Square", "Triangle", "Right Triangle", "Equilateral Triangle"],
+    types = [Factory, MonoFactory]
+)]
 fn bench_is_known_valid<F>(name: &str)
 where
     F: FactoryDirectory,
@@ -49,14 +61,20 @@ where
     let _ = F::list_known();
 }
 
-#[divan::bench(min_time = 1, args = SHAPE_TUPLES, types = [Factory, MonoFactory])]
-fn bench_create<F>(name_and_vals: (&str, &[f64]))
+#[divan::bench(min_time = 1, args = SHAPE_NAMES, types = [Factory, MonoFactory])]
+fn bench_create<F>(name: &str)
 where
     F: CreationFactory,
 {
-    let (name, _) = name_and_vals;
-
     let _ = F::create_default(black_box(&name));
+}
+
+#[divan::bench(min_time = 1, types = [Factory, MonoFactory])]
+fn bench_create_invalid_name<F>()
+where
+    F: CreationFactory,
+{
+    let _ = F::create_default(black_box("Unknown Shape"));
 }
 
 #[divan::bench(min_time = 1, args = SHAPE_TUPLES, types = [Factory, MonoFactory])]
@@ -69,40 +87,81 @@ where
 }
 
 #[divan::bench(min_time = 1, types = [Factory, MonoFactory])]
-fn bench_create_with_invalid<F>()
+fn bench_create_with_invalid_name<F>()
 where
     F: CreationFactory,
 {
-    let _ = F::create_with(black_box("Triangle"), black_box(&[1.0, 3.0]));
+    let _ = F::create_with(black_box("Unknown Shape"), black_box(&[1.0, 3.0]));
+}
+
+#[divan::bench(min_time = 1, args = SHAPE_NAMES, types = [Factory, MonoFactory])]
+fn bench_create_with_invalid_dims<F>(name: &str)
+where
+    F: CreationFactory,
+{
+    let _ = F::create_with(
+        black_box(&name),
+        black_box(&[1.0, 3.0, 5.0, 7.0, 8.0, 9.0]),
+    );
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_from_slice_circle() {
+fn bench_from_slice_circle_ok() {
     let dims: &[f64] = &[5.0];
     let _ = Circle::try_from(black_box(dims));
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_from_slice_square() {
+fn bench_from_slice_circle_err() {
+    let dims: &[f64] = &[5.0, 6.0];
+    let _ = Circle::try_from(black_box(dims));
+}
+
+#[divan::bench(min_time = 1)]
+fn bench_from_slice_square_ok() {
     let dims: &[f64] = &[5.0];
     let _ = Square::try_from(black_box(dims));
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_from_slice_triangle() {
+fn bench_from_slice_square_err() {
+    let dims: &[f64] = &[5.0, 7.0];
+    let _ = Square::try_from(black_box(dims));
+}
+
+#[divan::bench(min_time = 1)]
+fn bench_from_slice_triangle_ok() {
     let dims: &[f64] = &[4.0, 5.0, 6.0];
     let _ = Triangle::try_from(black_box(dims));
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_from_slice_right_triangle() {
+fn bench_from_slice_triangle_err() {
+    let dims: &[f64] = &[4.0, 5.0];
+    let _ = Triangle::try_from(black_box(dims));
+}
+
+#[divan::bench(min_time = 1)]
+fn bench_from_slice_right_triangle_ok() {
     let dims: &[f64] = &[4.0, 5.0];
     let _ = RightTriangle::try_from(black_box(dims));
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_from_slice_equilateral_triangle() {
+fn bench_from_slice_right_triangle_err() {
     let dims: &[f64] = &[4.0];
+    let _ = RightTriangle::try_from(black_box(dims));
+}
+
+#[divan::bench(min_time = 1)]
+fn bench_from_slice_equilateral_triangle_ok() {
+    let dims: &[f64] = &[4.0];
+    let _ = EquilateralTriangle::try_from(black_box(dims));
+}
+
+#[divan::bench(min_time = 1)]
+fn bench_from_slice_equilateral_triangle_err() {
+    let dims: &[f64] = &[4.0, 2.0];
     let _ = EquilateralTriangle::try_from(black_box(dims));
 }
 

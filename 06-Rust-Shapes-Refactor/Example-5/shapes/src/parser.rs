@@ -1,5 +1,4 @@
-use crate::factory::{CreationFactory, Factory};
-use crate::shape::Shape;
+use crate::factory::{CreationFactory};
 
 use std::io::BufRead;
 use std::str::FromStr;

@@ -120,7 +120,7 @@ impl FromStr for MonoShape {
         let split_line: Vec<&str> = line.trim().split(";").collect();
 
         if split_line.len() != 2 {
-            return Err(CreationError::MalformedLineError(format!(
+            return Err(CreationError::MalformedLineError(compact_str::format_compact!(
                 "Line '{line}' did not have exactly one (1) semicolon"
             )));
         }
@@ -193,7 +193,7 @@ impl CreationFactory for MonoFactory {
             .find(|(shape_name, _, _)| shape_name == &name)
         {
             Some((_, creation_op, _)) => Ok(creation_op()),
-            None => Err(CreationError::UnknownShapeError(name.to_owned())),
+            None => Err(CreationError::UnknownShapeError(name.into())),
         }
     }
 
@@ -209,7 +209,7 @@ impl CreationFactory for MonoFactory {
             .iter()
             .find(|(shape_name, _, _)| shape_name == &name)
         {
-            None => Err(CreationError::UnknownShapeError(name.to_owned())),
+            None => Err(CreationError::UnknownShapeError(name.into())),
             Some((_, _, creation_op)) => creation_op(&dims),
         }
     }
