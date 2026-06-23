@@ -36,9 +36,9 @@ const FACTORY_INFO: LazyCell<String> = LazyCell::new(|| {
         STAR_DIVIDER.clone(),
         format!("{:^38}", "Available Shapes"),
         STAR_DIVIDER.clone(),
-        Factory::list_known().to_string(),
+        MonoFactory::list_known().to_string(),
         STAR_DIVIDER.clone(),
-        format!("{:>2} shapes available.", Factory::number_known()),
+        format!("{:>2} shapes available.", MonoFactory::number_known()),
         "".to_owned(),
     ]
     .into_iter()

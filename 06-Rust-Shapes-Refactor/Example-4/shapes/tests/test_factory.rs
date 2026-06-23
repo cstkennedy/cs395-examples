@@ -75,13 +75,20 @@ fn test_create_with_equilateral_triangle() {
 #[case::Triangle("Triangle")]
 #[case::RightTriangle("Right Triangle")]
 #[case::EquilateralTriangle("Equilateral Triangle")]
-fn test_is_known(#[case] shape_name: &str) {
-    assert!(Factory::is_known(shape_name));
+fn test_is_known<F>(#[case] shape_name: &str, #[values(Factory)] _case: F)
+where
+    F: FactoryDirectory,
+{
+    assert!(F::is_known(shape_name));
 }
 
 #[rstest]
-fn test_list_known_contains() {
-    let f_str = Factory::list_known();
+#[case::Factory(Factory)]
+fn test_list_known_contains<F>(#[case] _case: F)
+where
+    F: FactoryDirectory,
+{
+    let f_str = F::list_known();
 
     assert!(f_str.contains("  Circle"));
     assert!(f_str.contains("  Square"));
@@ -91,6 +98,10 @@ fn test_list_known_contains() {
 }
 
 #[rstest]
-fn test_number_known() {
-    assert_that!(Factory::number_known(), is(equal_to(5)));
+#[case::Factory(Factory)]
+fn test_number_known<F>(#[case] _case: F)
+where
+    F: FactoryDirectory,
+{
+    assert_that!(F::number_known(), is(equal_to(5)));
 }
