@@ -1,15 +1,20 @@
-use eyre::WrapErr;
-use ordered_float::OrderedFloat;
-
-use shapes_lib::prelude::Factory;
-use shapes_lib::prelude::Parser as ShapeParser;
-
 use std::cell::LazyCell;
 use std::fs::File;
-use std::io::BufReader;
-use std::vec::Vec;
+use std::io::{self, BufReader, BufWriter, Write, stdout};
 
 use clap::Parser;
+use eyre::WrapErr;
+use itertools::Itertools;
+use ordered_float::OrderedFloat;
+use rayon::prelude::*;
+
+use shapes::prelude::Parser as ShapeParser;
+use shapes::prelude::{Factory, Shape};
+
+use shapes::factory::FactoryDirectory;
+use shapes::monoshape::MonoFactory;
+
+
 
 #[derive(clap::Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -33,13 +38,12 @@ const FACTORY_INFO: LazyCell<String> = LazyCell::new(|| {
         STAR_DIVIDER.clone(),
         format!("{:^38}", "Available Shapes"),
         STAR_DIVIDER.clone(),
-        Factory::list_known().to_string(),
+        MonoFactory::list_known().to_string(),
         STAR_DIVIDER.clone(),
-        format!("{:>2} shapes available.", Factory::number_known()),
+        format!("{:>2} shapes available.", MonoFactory::number_known()),
         "".to_owned(),
     ]
     .into_iter()
-    .collect::<Vec<String>>()
     .join("\n")
 });
 
@@ -87,7 +91,7 @@ fn main() -> eyre::Result<()> {
             .wrap_err_with(|| format!("Could not open '{}", cli.shapes_filename))?;
 
         let ins = BufReader::new(file);
-        ShapeParser::read_shapes_with(ins)
+        ShapeParser::<MonoFactory>::read_shapes_with(ins)
     };
 
     if shapes.len() == 0 {
@@ -98,20 +102,39 @@ fn main() -> eyre::Result<()> {
     println!("{:^38}", "Display All Shapes");
     println!("{}", *STAR_DIVIDER);
 
-    for shp in shapes.iter() {
-        println!("{}", shp);
-        println!();
+    /*
+    {
+        let locked_stdout = stdout().lock();
+        let mut buffered_stdout = BufWriter::new(locked_stdout);
+        for shp in shapes.iter() {
+            writeln!(buffered_stdout, "{}", shp)?;
+            writeln!(buffered_stdout)?;
+        }
     }
+    */
+    let locked_stdout = stdout().lock();
+    let buffered_stdout = BufWriter::new(locked_stdout);
+    print_shapes(buffered_stdout, shapes.iter())?;
 
     println!("{}", *STAR_DIVIDER);
     println!("{:^38}", "Display Shape Names");
     println!("{}", *STAR_DIVIDER);
-    for s in shapes.iter() {
-        println!("{}", s.name());
-    }
-    println!();
 
-    if let Some(largest) = shapes.iter().max_by_key(|s| OrderedFloat(s.area())) {
+    /*
+    {
+        let mut locked_stdout = stdout().lock();
+        for s in shapes.iter() {
+            writeln!(locked_stdout, "{}", s.name())?;
+        }
+        println!();
+    }
+    */
+    let locked_stdout = stdout().lock();
+    let buffered_stdout = BufWriter::new(locked_stdout);
+    print_shape_names(buffered_stdout, shapes.iter())?;
+
+    /*
+    if let Some(largest) = shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())) {
         println!("{}", *STAR_DIVIDER);
         println!("{:^38}", "Largest Shape by Area");
         println!("{}", *STAR_DIVIDER);
@@ -120,13 +143,64 @@ fn main() -> eyre::Result<()> {
         println!();
     }
 
-    if let Some(smallest) = shapes.iter().min_by_key(|s| OrderedFloat(s.perimeter())) {
+    if let Some(smallest) = shapes.par_iter().min_by_key(|s| OrderedFloat(s.perimeter())) {
         println!("{}", *STAR_DIVIDER);
         println!("{:^38}", "Smallest Shape by Perimeter");
         println!("{}", *STAR_DIVIDER);
 
         println!("{}", smallest);
     }
+    */
+
+    let (largest, smallest) = rayon::join(
+        || shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())),
+        || shapes.par_iter().min_by_key(|s| OrderedFloat(s.perimeter()))
+    );
+
+    if let Some(largest) = largest {
+        println!("{}", *STAR_DIVIDER);
+        println!("{:^38}", "Largest Shape by Area");
+        println!("{}", *STAR_DIVIDER);
+
+        println!("{}", largest);
+        println!();
+    }
+
+    if let Some(smallest) = smallest {
+        println!("{}", *STAR_DIVIDER);
+        println!("{:^38}", "Smallest Shape by Perimeter");
+        println!("{}", *STAR_DIVIDER);
+
+        println!("{}", smallest);
+    }
+
+    Ok(())
+}
+
+fn print_shapes<'a, W, I, S>(mut writer: W, shapes: I) -> Result<(), io::Error>
+where
+    W: Write,
+    I: Iterator<Item = &'a S>,
+    S: std::fmt::Display + 'a,
+{
+    for shp in shapes {
+        writeln!(writer, "{}", shp)?;
+        writeln!(writer)?;
+    }
+
+    Ok(())
+}
+
+fn print_shape_names<'a, W, I, S>(mut writer: W, shapes: I) -> Result<(), io::Error>
+where
+    W: Write,
+    I: Iterator<Item = &'a S>,
+    S: Shape + 'a,
+{
+    for shp in shapes {
+        writeln!(writer, "{}", shp.name())?;
+    }
+    writeln!(writer)?;
 
     Ok(())
 }

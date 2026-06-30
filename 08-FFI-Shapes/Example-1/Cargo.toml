@@ -1,7 +1,8 @@
 [workspace]
-resolver="3"
+resolver = "3"
 
 members = [
-    "shapes_lib",
-    "shapes_rs"
+    "shapes",
+    "shapes_bin",
+    "shapes_rand_file"
 ]
