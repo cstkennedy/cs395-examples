@@ -5,6 +5,7 @@ use crate::house::{House, HouseBuilder};
 use crate::room::{Room, RoomBuilder};
 use std::vec::Vec;
 
+// This is degenerate approach to FromStr
 pub fn read_house_from_str(room_data: &str) -> House {
     let parsed_rooms: Vec<Room> = room_data
         .lines()
@@ -12,7 +13,7 @@ pub fn read_house_from_str(room_data: &str) -> House {
         .filter(|line| line.contains(";"))
         .map(|line| {
             // Grab the name first
-            let line = line.split(";").collect::<Vec<&str>>();
+            let line = line.split(";").collect::<Vec<&str>>(); // temporary Vec
             let name = line[0];
 
             // Split everything else by whitespace

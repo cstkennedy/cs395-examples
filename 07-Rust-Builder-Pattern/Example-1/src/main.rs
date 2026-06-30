@@ -1,11 +1,6 @@
 use itertools::{Itertools, MinMaxResult};
 use ordered_float::OrderedFloat;
 
-// use std::io::BufReader;
-// use std::fs::File;
-// use std::env;
-use std::vec::Vec;
-
 use room_renovation::flooring::FlooringBuilder;
 use room_renovation::house::{House, HouseBuilder};
 use room_renovation::io::read_house_from_str;

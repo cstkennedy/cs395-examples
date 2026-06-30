@@ -29,6 +29,7 @@ fn main() -> eyre::Result<()> {
 
     let duplicate_house = upgrade_flooring(house.iter())
         .wrap_err("Reference 'house' was invalid (THIS SHOULD NEVER HAPPEN)")?;
+    // TODO: Fix error message
 
     println!("{house}");
     println!("{duplicate_house}");
