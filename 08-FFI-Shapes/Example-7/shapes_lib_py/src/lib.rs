@@ -58,18 +58,17 @@ impl ShapeParser {
 
         let buffer = BufReader::new(shape_file);
 
-        let (shapes, errors): (Vec<_>, Vec<_>) = buffer
+        let shapes: Vec<_> = buffer
             .lines()
             .flatten()
             .map(|line| ShapeParser::read_shape(&line))
-            .partition_map(|result| match result {
-                Ok(shape) => Either::Left(shape),
-                Err(err) => Either::Right(err),
-            });
-
-        for err in errors {
-            log::warn!("{}", err);
-        }
+            .inspect(|result| {
+                if let Err(err) = result {
+                    log::warn!("{}", err);
+                }
+            })
+            .flatten()
+            .collect();
 
         Ok(shapes)
     }
@@ -174,6 +173,12 @@ impl ShapeCollection {
     pub fn __str__(&self) -> String {
         self.shapes.iter().map(ShapeWrapper::__str__).join("\n\n")
     }
+
+    /*
+    pub fn __len__(&self) -> usize {
+        self.shapes.len()
+    }
+    */
 }
 
 #[pymodule]
