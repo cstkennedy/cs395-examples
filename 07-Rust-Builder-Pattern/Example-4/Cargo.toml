@@ -14,5 +14,4 @@ thiserror = "2.0.0"
 
 [dev-dependencies]
 hamcrest2 = "*"
-stringreader = "0.1.1"
 
