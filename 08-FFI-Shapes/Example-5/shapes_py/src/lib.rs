@@ -1,15 +1,15 @@
 use pyo3::prelude::*;
 
 pub mod circle;
+pub mod error;
+pub mod factory;
 pub mod square;
 pub mod triangle;
-pub mod factory;
-pub mod error;
 
 use crate::circle::CircleWrapper;
+use crate::factory::{ShapeFactory, ShapeWrapper};
 use crate::square::SquareWrapper;
 use crate::triangle::{EquilateralTriangleWrapper, RightTriangleWrapper, TriangleWrapper};
-use crate::factory::{ShapeWrapper, ShapeFactory};
 
 #[pymodule]
 mod shapes_py {

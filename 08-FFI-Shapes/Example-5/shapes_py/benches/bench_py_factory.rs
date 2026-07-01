@@ -3,9 +3,8 @@ use divan::{Bencher, black_box};
 use shapes::circle::Circle;
 use shapes::triangle::Triangle;
 
-use shapes_py::factory::ShapeFactory;
 use shapes_py::circle::CircleWrapper;
-
+use shapes_py::factory::ShapeFactory;
 
 const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
     (&"Triangle", &[3.0, 4.0, 5.0]),
@@ -13,6 +12,14 @@ const SHAPE_TUPLES: &'static [(&str, &[f64])] = &[
     (&"Equilateral Triangle", &[5.0]),
     (&"Circle", &[5.0]),
     (&"Square", &[5.0]),
+];
+
+const SHAPE_NAMES: &'static [&str] = &[
+    &"Triangle",
+    &"Right Triangle",
+    &"Equilateral Triangle",
+    &"Circle",
+    &"Square",
 ];
 
 #[divan::bench(min_time = 1, args = ["Circle", "Square", "Triangle", "Right Triangle", "Equilateral Triangle"])]
@@ -49,20 +56,29 @@ fn bench_create_with(name_and_vals: (&str, &[f64])) {
 }
 
 #[divan::bench(min_time = 1)]
-fn bench_create_with_invalid() {
-    let _ = ShapeFactory::create_with(black_box("Triangle"), black_box(vec![1.0, 3.0]));
+fn bench_create_with_invalid_name(bencher: Bencher) {
+    bencher
+        .with_inputs(|| {
+            let dims = vec![1.0, 3.0];
+
+            dims
+        })
+        .bench_values(|dims| {
+            let _ = ShapeFactory::create_with(black_box("Unknown Shape"), black_box(dims));
+        });
 }
 
-#[divan::bench(min_time = 1)]
-fn bench_from_slice_circle() {
-    let dims: &[f64] = &[5.0];
-    let _ = Circle::try_from(black_box(dims));
-}
+#[divan::bench(min_time = 1, args = SHAPE_NAMES)]
+fn bench_create_with_invalid_dims(bencher: Bencher, name: &str) {
+    bencher
+        .with_inputs(|| {
+            let dims = vec![1.0, 3.0, 5.0, 7.0, 8.0, 9.0];
 
-#[divan::bench(min_time = 1)]
-fn bench_from_slice_triangle() {
-    let dims: &[f64] = &[4.0, 5.0, 6.0];
-    let _ = Triangle::try_from(black_box(dims));
+            dims
+        })
+        .bench_values(|dims| {
+            let _ = ShapeFactory::create_with(black_box(&name), black_box(dims));
+        });
 }
 
 fn main() {

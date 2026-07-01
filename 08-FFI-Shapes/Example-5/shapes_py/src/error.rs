@@ -28,8 +28,8 @@ impl From<shapes::error::CreationError> for ShapeCreationError {
 
             shapes::error::CreationError::MalformedLineError(msg) => {
                 ShapeCreationError::MalformedLineError(msg.to_string())
-            },
-            shapes::error::CreationError::ParseFloatError(_) => todo!()
+            }
+            shapes::error::CreationError::ParseFloatError(_) => todo!(),
         }
     }
 }

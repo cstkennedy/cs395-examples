@@ -121,9 +121,7 @@ impl FromStr for MonoShape {
 
         let Some(name) = tokens.next() else {
             return Err(CreationError::MalformedLineError(
-                compact_str::format_compact!(
-                    "Line '{line}' did not include a name"
-                ),
+                compact_str::format_compact!("Line '{line}' did not include a name"),
             ));
         };
 

@@ -1,16 +1,18 @@
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 
-use shapes::prelude::{Shape};
-use shapes::{circle::Circle, square::Square, triangle::Triangle, equilateral_triangle::EquilateralTriangle, right_triangle::RightTriangle};
-use shapes::factory::{FactoryDirectory, CreationFactory};
+use shapes::factory::{CreationFactory, FactoryDirectory};
 use shapes::monoshape::{MonoFactory, MonoShape};
+use shapes::prelude::Shape;
+use shapes::{
+    circle::Circle, equilateral_triangle::EquilateralTriangle, right_triangle::RightTriangle,
+    square::Square, triangle::Triangle,
+};
 
 use crate::circle::CircleWrapper;
+use crate::error::ShapeCreationError;
 use crate::square::SquareWrapper;
 use crate::triangle::{EquilateralTriangleWrapper, RightTriangleWrapper, TriangleWrapper};
-use crate::error::ShapeCreationError;
-
 
 #[pyclass(name = "Shape")]
 pub enum ShapeWrapper {
