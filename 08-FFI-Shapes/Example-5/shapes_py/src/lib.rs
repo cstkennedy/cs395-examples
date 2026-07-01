@@ -1,10 +1,10 @@
 use pyo3::prelude::*;
 
-mod circle;
-mod square;
-mod triangle;
-mod factory;
-mod error;
+pub mod circle;
+pub mod square;
+pub mod triangle;
+pub mod factory;
+pub mod error;
 
 use crate::circle::CircleWrapper;
 use crate::square::SquareWrapper;
