@@ -1,0 +1,8 @@
+[package]
+name = "coin_flip_rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+coin_flip = { path = "../coin_flip" }
+itertools = "0.15.0"
