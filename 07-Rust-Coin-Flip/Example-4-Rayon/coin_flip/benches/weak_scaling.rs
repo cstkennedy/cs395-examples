@@ -3,7 +3,7 @@ use divan::{Bencher, black_box};
 use coin_flip::flip_task::FlipTask;
 use coin_flip::run_parallel;
 
-#[divan::bench(min_time = 1, args = [1, 2, 4, 8])]
+#[divan::bench(min_time = 1, args = [1, 2, 4, 8, 16, 32, 64, 128])]
 fn bench_10_000(num_threads: usize) {
     let num_flips = 10_000 * num_threads as u64;
 
@@ -14,7 +14,7 @@ fn bench_10_000(num_threads: usize) {
     }
 }
 
-#[divan::bench(min_time = 1, args = [1, 2, 4, 8])]
+#[divan::bench(min_time = 1, args = [1, 2, 4, 8, 16, 32, 64, 128])]
 fn bench_100_000(num_threads: usize) {
     let num_flips = 100_000 * num_threads as u64;
 
@@ -25,7 +25,7 @@ fn bench_100_000(num_threads: usize) {
     }
 }
 
-#[divan::bench(min_time = 1, args = [1, 2, 4, 8])]
+#[divan::bench(min_time = 1, args = [1, 2, 4, 8, 16, 32, 64, 128])]
 fn bench_1_000_000(num_threads: usize) {
     let num_flips = 1_000_000 * num_threads as u64;
 
@@ -36,7 +36,7 @@ fn bench_1_000_000(num_threads: usize) {
     }
 }
 
-#[divan::bench(min_time = 1, args = [1, 2, 4, 8])]
+#[divan::bench(min_time = 1, args = [1, 2, 4, 8, 16, 32, 64, 128])]
 fn bench_10_000_000(num_threads: usize) {
     let num_flips = 10_000_000 * num_threads as u64;
 
