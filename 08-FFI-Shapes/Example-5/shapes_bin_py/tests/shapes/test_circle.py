@@ -4,7 +4,7 @@ import pytest
 from hamcrest import *
 
 from shapes.shape import FPT_FMT, Shape
-from shapes_lib_py import Circle
+from shapes_py import Circle
 
 """
 1 - Does this piece of code perform the operations

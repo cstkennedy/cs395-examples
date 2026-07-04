@@ -40,6 +40,12 @@ cwd = "./shapes_bin_py"
 command = "${PYTHON}"
 args = ["-m", "pytest", "-v", "tests", "-ra"]
 
+[tasks.bench-python]
+dependencies = [ "build", "copy-lib" ]
+cwd = "./shapes_bin_py"
+command = "uv"
+args = [ "run", "pytest", "--benchmark-only", "-v", "-ra", "--no-header", "--benchmark-time-unit", "ns", "--benchmark-columns", "min,max,median,mean,rounds,iterations" ]
+
 [tasks.run-python]
 dependencies = [ "build", "copy-lib" ]
 cwd = "./shapes_bin_py"

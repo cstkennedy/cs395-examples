@@ -5,7 +5,7 @@ import pytest
 from hamcrest import *
 
 from shapes.shape import FPT_FMT, Shape
-from shapes_lib_py import Triangle
+from shapes_py import Triangle
 
 """
 1 - Does this piece of code perform the operations
