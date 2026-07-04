@@ -3,6 +3,7 @@ default_to_workspace = false
 
 [env]
 PYTHON = "python3.11"
+PYO3_PYTHON="python3.11"
 LIB = "coin_flip"
 
 [tasks.build-ffi-flow]
