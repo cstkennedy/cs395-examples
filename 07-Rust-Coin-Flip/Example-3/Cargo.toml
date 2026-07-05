@@ -1,9 +1,0 @@
-[workspace]
-
-resolver = "2"
-
-members = [
-    "coin_flip",
-    "coin_flip_py",
-    "coin_flip_rs"
-]
