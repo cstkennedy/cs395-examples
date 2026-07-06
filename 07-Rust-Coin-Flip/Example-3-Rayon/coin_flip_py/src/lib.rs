@@ -1,5 +1,6 @@
 use std::time::{Duration, Instant};
 
+use itertools::Itertools;
 use log;
 
 use pyo3::prelude::*;
@@ -44,7 +45,6 @@ impl FlipSummary {
             .iter()
             .enumerate()
             .map(|(idx, result)| -> String { format!("Worker {idx:>2} -> {:}", result.task) })
-            .collect::<Vec<String>>()
             .join("\n");
 
         Ok(format!(

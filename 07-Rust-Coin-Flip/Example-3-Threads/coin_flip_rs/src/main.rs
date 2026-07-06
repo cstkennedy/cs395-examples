@@ -1,6 +1,8 @@
 use std::env;
 use std::time::{Duration, Instant};
 
+use itertools::Itertools;
+
 use ::coin_flip::flip_task::FlipTask;
 use ::coin_flip::*;
 
@@ -52,7 +54,6 @@ fn main() {
         .iter()
         .enumerate()
         .map(|(idx, result)| -> String { format!("Worker {idx:>2} -> {:}", result) })
-        .collect::<Vec<String>>()
         .join("\n");
 
     println!(

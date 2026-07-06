@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 coin_flip = { path = "../coin_flip" }
+itertools = "0.15.0"

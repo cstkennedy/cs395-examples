@@ -4,7 +4,6 @@ use std::thread;
 
 use flip_task::FlipTask;
 
-
 pub fn get_num_flips_per_thread(num_threads: usize, num_flips: u64) -> Vec<u64> {
     let num_flips_per_thread = num_flips / (num_threads as u64);
     let num_flips_truncated = num_flips - (num_flips_per_thread * (num_threads as u64));
