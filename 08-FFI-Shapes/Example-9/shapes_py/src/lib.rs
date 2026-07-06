@@ -9,7 +9,6 @@ use ordered_float::OrderedFloat;
 use log;
 
 use pyo3::prelude::*;
-use shapes::prelude::MonoShape;
 
 pub mod circle;
 pub mod error;
@@ -17,6 +16,8 @@ pub mod factory;
 pub mod square;
 pub mod triangle;
 mod utilities;
+
+use shapes::monoshape::MonoShape;
 
 use crate::circle::CircleWrapper;
 use crate::error::ShapeCreationError;

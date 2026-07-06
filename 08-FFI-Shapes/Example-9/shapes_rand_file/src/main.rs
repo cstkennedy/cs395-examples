@@ -8,7 +8,6 @@ use rand::rngs::SmallRng;
 
 use itertools::Itertools;
 
-
 const KNOWN_SHAPES: [(&'static str, usize); 5] = [
     ("Triangle", 3),
     ("Right Triangle", 2),

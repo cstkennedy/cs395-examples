@@ -18,16 +18,18 @@ impl From<shapes::error::CreationError> for ShapeCreationError {
     fn from(err: shapes::error::CreationError) -> Self {
         match err {
             shapes::error::CreationError::UnknownShapeError(msg) => {
-                ShapeCreationError::UnknownShapeError(msg)
+                ShapeCreationError::UnknownShapeError(msg.to_string())
             }
 
             shapes::error::CreationError::DimensionCountError { name, num_required } => {
+                let name = name.to_string();
                 ShapeCreationError::DimensionCountError { name, num_required }
             }
 
             shapes::error::CreationError::MalformedLineError(msg) => {
-                ShapeCreationError::MalformedLineError(msg)
+                ShapeCreationError::MalformedLineError(msg.to_string())
             }
+            shapes::error::CreationError::ParseFloatError(_) => todo!(),
         }
     }
 }

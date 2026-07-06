@@ -1,7 +1,3 @@
-#[cfg(test)]
-#[macro_use]
-extern crate hamcrest2;
-
 pub mod circle;
 pub mod equilateral_triangle;
 pub mod error;
@@ -13,9 +9,10 @@ pub mod triangle;
 pub mod factory;
 pub mod parser;
 
+pub mod monoshape;
+
 pub mod prelude {
     pub use crate::factory::Factory;
-    pub use crate::factory::MonoShape;
     pub use crate::parser::Parser;
     pub use crate::shape::Shape;
 }

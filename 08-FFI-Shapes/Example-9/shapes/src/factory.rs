@@ -7,102 +7,36 @@ use crate::square::Square;
 use crate::triangle::Triangle;
 
 use std::cell::LazyCell;
-use std::fmt;
 
-/// A Monomorphized Wrapper for all Known Shapes.
-///
-/// Note: This is the first step in reducing duplicated FFI factory logic.
-#[derive(Clone, Debug)]
-pub enum MonoShape {
-    Circle { inner: Circle },
-    Square { inner: Square },
-    Triangle { inner: Triangle },
-    EquilateralTriangle { inner: EquilateralTriangle },
-    RightTriangle { inner: RightTriangle },
-}
+use itertools::Itertools;
 
-// TODO: replace with macro
-impl Shape for MonoShape {
-    fn name(&self) -> &'static str {
-        match *&self {
-            MonoShape::Circle { inner } => inner.name(),
-            MonoShape::Square { inner } => inner.name(),
-            MonoShape::Triangle { inner } => inner.name(),
-            MonoShape::EquilateralTriangle { inner } => inner.name(),
-            MonoShape::RightTriangle { inner } => inner.name(),
-        }
-    }
-
-    fn area(&self) -> f64 {
-        match *&self {
-            MonoShape::Circle { inner } => inner.area(),
-            MonoShape::Square { inner } => inner.area(),
-            MonoShape::Triangle { inner } => inner.area(),
-            MonoShape::EquilateralTriangle { inner } => inner.area(),
-            MonoShape::RightTriangle { inner } => inner.area(),
-        }
-    }
-
-    fn perimeter(&self) -> f64 {
-        match *&self {
-            MonoShape::Circle { inner } => inner.perimeter(),
-            MonoShape::Square { inner } => inner.perimeter(),
-            MonoShape::Triangle { inner } => inner.perimeter(),
-            MonoShape::EquilateralTriangle { inner } => inner.perimeter(),
-            MonoShape::RightTriangle { inner } => inner.perimeter(),
-        }
-    }
-}
-
-impl fmt::Display for MonoShape {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *&self {
-            MonoShape::Circle { inner } => {
-                write!(f, "{}", &inner)
-            }
-            MonoShape::Square { inner } => {
-                write!(f, "{}", &inner)
-            }
-            MonoShape::Triangle { inner } => {
-                write!(f, "{}", &inner)
-            }
-            MonoShape::EquilateralTriangle { inner } => {
-                write!(f, "{}", &inner)
-            }
-            MonoShape::RightTriangle { inner } => {
-                write!(f, "{}", &inner)
-            }
-        }
-    }
-}
-
-impl From<Circle> for MonoShape {
+impl From<Circle> for Box<dyn Shape> {
     fn from(shape: Circle) -> Self {
-        MonoShape::Circle { inner: shape }
+        Box::new(shape)
     }
 }
 
-impl From<Square> for MonoShape {
+impl From<Square> for Box<dyn Shape> {
     fn from(shape: Square) -> Self {
-        MonoShape::Square { inner: shape }
+        Box::new(shape)
     }
 }
 
-impl From<Triangle> for MonoShape {
+impl From<Triangle> for Box<dyn Shape> {
     fn from(shape: Triangle) -> Self {
-        MonoShape::Triangle { inner: shape }
+        Box::new(shape)
     }
 }
 
-impl From<EquilateralTriangle> for MonoShape {
+impl From<EquilateralTriangle> for Box<dyn Shape> {
     fn from(shape: EquilateralTriangle) -> Self {
-        MonoShape::EquilateralTriangle { inner: shape }
+        Box::new(shape)
     }
 }
 
-impl From<RightTriangle> for MonoShape {
+impl From<RightTriangle> for Box<dyn Shape> {
     fn from(shape: RightTriangle) -> Self {
-        MonoShape::RightTriangle { inner: shape }
+        Box::new(shape)
     }
 }
 
@@ -112,11 +46,10 @@ impl TryFrom<&[f64]> for Triangle {
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
         if dims.len() != 3 {
             return Err(CreationError::DimensionCountError {
-                name: String::from("Triangle"),
+                name: "Triangle",
                 num_required: 3,
             });
         }
-
         Ok(Triangle {
             side_a: dims[0],
             side_b: dims[1],
@@ -131,11 +64,10 @@ impl TryFrom<&[f64]> for EquilateralTriangle {
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
         if dims.len() != 1 {
             return Err(CreationError::DimensionCountError {
-                name: String::from("EquilateralTriangle"),
+                name: "Equilateral Triangle",
                 num_required: 1,
             });
         }
-
         Ok(EquilateralTriangle { side: dims[0] })
     }
 }
@@ -146,11 +78,10 @@ impl TryFrom<&[f64]> for RightTriangle {
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
         if dims.len() != 2 {
             return Err(CreationError::DimensionCountError {
-                name: String::from("RightTriangle"),
+                name: "Right Triangle",
                 num_required: 2,
             });
         }
-
         Ok(RightTriangle {
             base: dims[0],
             height: dims[1],
@@ -164,11 +95,10 @@ impl TryFrom<&[f64]> for Circle {
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
         if dims.len() != 1 {
             return Err(CreationError::DimensionCountError {
-                name: String::from("Circle"),
+                name: "Circle",
                 num_required: 1,
             });
         }
-
         Ok(Circle { radius: dims[0] })
     }
 }
@@ -179,7 +109,7 @@ impl TryFrom<&[f64]> for Square {
     fn try_from(dims: &[f64]) -> Result<Self, Self::Error> {
         if dims.len() != 1 {
             return Err(CreationError::DimensionCountError {
-                name: String::from("Square"),
+                name: "Square",
                 num_required: 1,
             });
         }
@@ -188,13 +118,62 @@ impl TryFrom<&[f64]> for Square {
     }
 }
 
-type DefaultFunction = dyn Fn() -> MonoShape;
-type DimFunction = dyn Fn(&[f64]) -> Result<MonoShape, CreationError>;
+impl std::str::FromStr for Box<dyn Shape> {
+    type Err = CreationError;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+        let split_line: Vec<&str> = line.trim().split(";").collect();
+
+        if split_line.len() != 2 {
+            return Err(CreationError::MalformedLineError(
+                compact_str::format_compact!(
+                    "Line '{line}' did not have exactly one (1) semicolon"
+                ),
+            ));
+        }
+
+        let name = split_line[0];
+        let values: Vec<f64> = split_line[1]
+            .split_whitespace()
+            .flat_map(|token| token.parse())
+            .collect();
+
+        let shape = Factory::create_with(name, &values)?;
+
+        Ok(shape)
+    }
+}
+
+//------------------------------------------------------------------------------
+// Factory Traits
+//------------------------------------------------------------------------------
+pub trait CreationFactory {
+    type Item;
+    type Error;
+
+    fn create_default(name: &str) -> Result<Self::Item, Self::Error>;
+
+    fn create_with(name: &str, dims: &[f64]) -> Result<Self::Item, Self::Error>;
+}
+
+pub trait FactoryDirectory {
+    fn is_known(name: &str) -> bool;
+
+    fn number_known() -> usize;
+
+    fn list_known() -> String;
+}
+
+//------------------------------------------------------------------------------
+// Factory Implementation
+//------------------------------------------------------------------------------
+type DefaultFunction = dyn Fn() -> Box<dyn Shape>;
+type DimFunction = dyn Fn(&[f64]) -> Result<Box<dyn Shape>, CreationError>;
 type ShapeTuple<'a> = (&'a str, Box<DefaultFunction>, Box<DimFunction>);
 
 #[rustfmt::skip]
-const CREATE_SHAPE: LazyCell<Vec<ShapeTuple>> = LazyCell::new(|| {
-    vec![
+const CREATE_SHAPE: LazyCell<[ShapeTuple; 5]> = LazyCell::new(|| {
+    [
         (
             "Triangle",
             Box::new(|| Triangle::default().into()),
@@ -225,20 +204,23 @@ const CREATE_SHAPE: LazyCell<Vec<ShapeTuple>> = LazyCell::new(|| {
 
 pub struct Factory;
 
-impl Factory {
+impl CreationFactory for Factory {
+    type Item = Box<dyn Shape>;
+    type Error = CreationError;
+
     /// Create a Shape
     ///
     /// # Arguments
     ///
     ///   * `name` shape to be created
     ///
-    pub fn create(name: &str) -> Result<MonoShape, CreationError> {
+    fn create_default(name: &str) -> Result<Self::Item, Self::Error> {
         match CREATE_SHAPE
             .iter()
             .find(|(shape_name, _, _)| shape_name == &name)
         {
             Some((_, creation_op, _)) => Ok(creation_op().into()),
-            _ => Err(CreationError::UnknownShapeError(String::from(name))),
+            None => Err(CreationError::UnknownShapeError(name.into())),
         }
     }
 
@@ -249,41 +231,41 @@ impl Factory {
     ///   * `name` shape to be created
     ///   * `dims` input dimensions
     ///
-    pub fn create_with(name: &str, dims: &[f64]) -> Result<MonoShape, CreationError> {
-        if let Some((_, _, creation_op)) = CREATE_SHAPE
+    fn create_with(name: &str, dims: &[f64]) -> Result<Self::Item, Self::Error> {
+        match CREATE_SHAPE
             .iter()
             .find(|(shape_name, _, _)| shape_name == &name)
         {
-            return creation_op(&dims);
+            None => Err(CreationError::UnknownShapeError(name.into())),
+            Some((_, _, creation_op)) => creation_op(&dims),
         }
-
-        Err(CreationError::UnknownShapeError(String::from(name)))
     }
+}
 
+impl FactoryDirectory for Factory {
     /// Determine whether a given shape is known
     ///
     /// # Arguments
     ///
     ///  * `name` the shape for which to query
     ///
-    pub fn is_known(name: &str) -> bool {
+    fn is_known(name: &str) -> bool {
         CREATE_SHAPE
             .iter()
             .find(|(shape_name, _, _)| shape_name == &name)
             .is_some()
     }
 
-    pub fn number_known() -> usize {
+    fn number_known() -> usize {
         CREATE_SHAPE.len()
     }
 
     /// List the known shapes, one per line
     ///
-    pub fn list_known() -> String {
+    fn list_known() -> String {
         CREATE_SHAPE
             .iter()
             .map(|(name, _, _)| format!("  {}", name))
-            .collect::<Vec<String>>()
             .join("\n")
             + "\n"
     }

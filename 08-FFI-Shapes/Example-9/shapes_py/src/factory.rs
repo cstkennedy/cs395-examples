@@ -1,6 +1,9 @@
 use pyo3::prelude::*;
+use pyo3::types::PyAny;
 
-use shapes::prelude::Factory;
+use shapes::factory::{CreationFactory, FactoryDirectory};
+use shapes::monoshape::{MonoFactory, MonoShape};
+use shapes::prelude::Shape;
 use shapes::{
     circle::Circle, equilateral_triangle::EquilateralTriangle, right_triangle::RightTriangle,
     square::Square, triangle::Triangle,
@@ -51,14 +54,14 @@ impl From<RightTriangle> for ShapeWrapper {
     }
 }
 
-impl From<shapes::prelude::MonoShape> for ShapeWrapper {
-    fn from(monomorphized: shapes::prelude::MonoShape) -> Self {
+impl From<MonoShape> for ShapeWrapper {
+    fn from(monomorphized: MonoShape) -> Self {
         match monomorphized {
-            shapes::prelude::MonoShape::Circle { inner } => inner.into(),
-            shapes::prelude::MonoShape::Square { inner } => inner.into(),
-            shapes::prelude::MonoShape::Triangle { inner } => inner.into(),
-            shapes::prelude::MonoShape::EquilateralTriangle { inner } => inner.into(),
-            shapes::prelude::MonoShape::RightTriangle { inner } => inner.into(),
+            MonoShape::Circle { inner } => inner.into(),
+            MonoShape::Square { inner } => inner.into(),
+            MonoShape::Triangle { inner } => inner.into(),
+            MonoShape::EquilateralTriangle { inner } => inner.into(),
+            MonoShape::RightTriangle { inner } => inner.into(),
         }
     }
 }
@@ -120,7 +123,10 @@ impl ShapeFactory {
     ///
     #[staticmethod]
     pub fn create(name: &str) -> Result<ShapeWrapper, ShapeCreationError> {
-        Ok(ShapeWrapper::from(shapes::prelude::Factory::create(name)?))
+        let mono_shape = MonoFactory::create_default(name)?;
+        let wrapped_shape: ShapeWrapper = mono_shape.into();
+
+        Ok(wrapped_shape)
     }
 
     /// Create a Shape with specified dimensions.
@@ -132,7 +138,10 @@ impl ShapeFactory {
     ///
     #[staticmethod]
     pub fn create_with(name: &str, dims: Vec<f64>) -> Result<ShapeWrapper, ShapeCreationError> {
-        Ok(ShapeWrapper::from(shapes::prelude::Factory::create_with(name, &dims[..])?))
+        let mono_shape = MonoFactory::create_with(name, &dims[..])?;
+        let wrapped_shape: ShapeWrapper = mono_shape.into();
+
+        Ok(wrapped_shape)
     }
 
     /// Determine whether a given shape is known
@@ -143,18 +152,18 @@ impl ShapeFactory {
     ///
     #[staticmethod]
     pub fn is_known(name: &str) -> bool {
-        Factory::is_known(&name)
+        MonoFactory::is_known(&name)
     }
 
     #[staticmethod]
     pub fn number_known() -> usize {
-        Factory::number_known()
+        MonoFactory::number_known()
     }
 
     /// List the known shapes, one per line
     ///
     #[staticmethod]
     pub fn list_known() -> String {
-        Factory::list_known()
+        MonoFactory::list_known()
     }
 }

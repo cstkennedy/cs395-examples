@@ -1,10 +1,10 @@
 #[cfg(test)]
-#[macro_use]
+use std::io::BufReader;
+
 use hamcrest2::prelude::*;
 
+use shapes::factory::{CreationFactory, Factory, FactoryDirectory};
 use shapes::prelude::Parser;
-
-use std::io::BufReader;
 
 #[test]
 fn test_read_shapes() {
@@ -18,7 +18,7 @@ fn test_read_shapes() {
         1337 Haxor"#;
 
     let str_reader = BufReader::new(raw_str.as_bytes());
-    let some_shapes = Parser::read_shapes(str_reader);
+    let some_shapes = Parser::<Factory>::read_shapes(str_reader);
 
     assert_that!(some_shapes.len(), is(equal_to(5)));
 
@@ -41,7 +41,7 @@ fn test_read_shapes_with() {
         1337 Haxor; invalid input"#;
 
     let str_reader = BufReader::new(raw_str.as_bytes());
-    let some_shapes = Parser::read_shapes_with(str_reader);
+    let some_shapes = Parser::<Factory>::read_shapes_with(str_reader);
     // println!("{:?}", some_shapes);
     assert_that!(some_shapes.len(), is(equal_to(5)));
 
