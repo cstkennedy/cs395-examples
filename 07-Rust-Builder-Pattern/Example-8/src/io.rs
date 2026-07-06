@@ -85,7 +85,7 @@ impl FromStr for Room {
 
         let room = Room::builder()
             .with_name(name)
-            .with_dimensions(dimensions.length, dimensions.width)?
+            .with_checked_dimensions(dimensions)
             .with_flooring(
                 Flooring::builder()
                     .with_name(&flooring_name)

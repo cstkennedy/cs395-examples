@@ -155,25 +155,6 @@ impl RoomBuilder<NoName, NoDimensions, NoFlooring> {
 }
 
 impl RoomBuilder<String, NoDimensions, NoFlooring> {
-    #[deprecated]
-    pub fn with_dimensions(
-        self,
-        length: f64,
-        width: f64,
-    ) -> Result<RoomBuilder<String, DimensionSet, NoFlooring>, RoomErrorWithState<Self>> {
-        match DimensionSet::try_from((length, width)) {
-            Err(error) => Err(RoomErrorWithState {
-                the_error: error.into(),
-                the_builder: self,
-            }),
-            Ok(dims) => Ok(RoomBuilder {
-                name: self.name,
-                dimensions: dims,
-                flooring: self.flooring,
-            }),
-        }
-    }
-
     pub fn with_checked_dimensions(
         self,
         dimensions: DimensionSet,
@@ -197,27 +178,8 @@ impl<SF> RoomBuilder<String, DimensionSet, SF> {
 }
 
 impl RoomBuilder<String, DimensionSet, Flooring> {
-    #[deprecated]
-    pub fn with_dimensions(
-        mut self,
-        length: f64,
-        width: f64,
-    ) -> Result<Self, RoomErrorWithState<Self>> {
-        match DimensionSet::try_from((length, width)) {
-            Err(error) => Err(RoomErrorWithState {
-                the_error: error.into(),
-                the_builder: self,
-            }),
-            Ok(dims) => {
-                self.dimensions = dims;
-
-                Ok(self)
-            }
-        }
-    }
-
     pub fn with_checked_dimensions(mut self, dimensions: DimensionSet) -> Self {
-        self.dimensions = dimensions.into();
+        self.dimensions = dimensions;
 
         self
     }
