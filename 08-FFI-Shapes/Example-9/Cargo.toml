@@ -2,7 +2,7 @@
 resolver="3"
 
 members = [
-    "shapes_lib",
-    "shapes_lib_py", "shapes_rand_file",
-    "shapes_rs"
+    "shapes",
+    "shapes_py", "shapes_rand_file",
+    "shapes_bin_rs"
 ]
