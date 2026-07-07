@@ -1,0 +1,9 @@
+[workspace]
+resolver="3"
+
+members = [
+    "shapes",
+    "shapes_py",
+    "shapes_bin_rs",
+    "shapes_rand_file"
+]

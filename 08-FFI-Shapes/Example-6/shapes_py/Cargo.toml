@@ -1,0 +1,32 @@
+[package]
+name = "shapes_py"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name="shapes_py"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+itertools = "0.15.0"
+log = "0.4.33"
+ordered-float = "5.3"
+pyo3-log = "0.13.4"
+shapes = { path = "../shapes" }
+thiserror = "2.0.18"
+
+[dependencies.pyo3]
+version = "0.29.0"
+features = ["extension-module"]
+
+[dev-dependencies]
+divan = "0.1.21"
+
+[[bench]]
+name = "bench_py_factory"
+harness = false
+
+[[bench]]
+name = "bench_py_parser"
+harness = false
+
