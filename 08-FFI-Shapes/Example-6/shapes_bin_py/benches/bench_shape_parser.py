@@ -32,7 +32,7 @@ def bench_parse_shape_line_err(benchmark, line: str):
     def wrapped():
         try:
             ShapeParser.read_shape(line)
-        except KeyError:
+        except (KeyError, ValueError):
             pass
 
     benchmark(wrapped)
