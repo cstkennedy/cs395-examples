@@ -5,7 +5,7 @@ import math
 import numpy as np
 
 
-def __can_be_divided_by_any(known_primes: np.array, next_prime: int):
+def __can_be_divided_by_any(known_primes: np.array, next_prime: int) -> bool:
     """
     Iterate over all known primes and check the next_prime.
 

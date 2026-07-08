@@ -4,7 +4,7 @@ from itertools import takewhile
 import math
 
 
-def __can_be_divided_by_any(known_primes: list[int], next_prime: int):
+def __can_be_divided_by_any(known_primes: list[int], next_prime: int) -> bool:
     """
     Iterate over all known primes and check the next_prime.
 
