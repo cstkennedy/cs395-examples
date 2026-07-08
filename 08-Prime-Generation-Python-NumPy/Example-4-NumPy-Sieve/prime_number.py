@@ -6,7 +6,6 @@ import sys
 
 import prime.bruteforce as bruteforce
 
-
 PROGRAM_HEADING = (
     "Prime Number Generation",
     "Thomas J. Kennedy"

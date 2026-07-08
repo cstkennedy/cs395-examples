@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from itertools import takewhile
 import math
-import numpy as np
+from itertools import takewhile
 from typing import Generator
+
+import numpy as np
 
 
 def generate_primes(to_generate: int, sieve_size: int = 10_000_000) -> Generator[int, None, None]:

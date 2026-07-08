@@ -1,11 +1,16 @@
 from __future__ import annotations
 
-from itertools import takewhile
 import math
+from itertools import takewhile
+from typing import Generator
+
 import numpy as np
+import numpy.typing as npt
 
 
-def __can_be_divided_by_any(known_primes: np.array, next_prime: int) -> bool:
+def __can_be_divided_by_any(
+    known_primes: npt.NDArray[np.uint32], next_prime: np.uint32
+) -> bool:
     """
     Iterate over all known primes and check the next_prime.
 
@@ -22,7 +27,7 @@ def __can_be_divided_by_any(known_primes: np.array, next_prime: int) -> bool:
     return (np.count_nonzero(remainders)) != len(remainders)
 
 
-def generate_primes(to_generate):
+def generate_primes(to_generate: int) -> Generator[int, None, None]:
     """
     Generate a sequence of prime numbers
 
