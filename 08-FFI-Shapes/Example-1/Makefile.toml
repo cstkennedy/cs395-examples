@@ -5,12 +5,15 @@ default_to_workspace = false
 PYTHON = "python3.11"
 PYO3_PYTHON="python3.11"
 
+[tasks.build-ffi-flow.condition]
+platforms = ["linux"]
+files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*shape*"] }
+
 [tasks.build-ffi-flow]
-condition = { files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*shape*"] }, platforms = ["linux"]}
-dependencies = [ "build", "copy-lib" ]
+dependencies = [ "build" ]
 
 [tasks.build]
-condition = { files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*prime*"] } }
+condition = { files_modified = { input = ["**/Cargo.toml", "**/src/**/*.rs"], output = ["./target/**/*shape*"] } }
 private = true
 command = "cargo"
 args = ["build", "--release"]

@@ -14,8 +14,6 @@ use shapes::prelude::{Factory, Shape};
 use shapes::factory::FactoryDirectory;
 use shapes::monoshape::MonoFactory;
 
-
-
 #[derive(clap::Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -154,7 +152,11 @@ fn main() -> eyre::Result<()> {
 
     let (largest, smallest) = rayon::join(
         || shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())),
-        || shapes.par_iter().min_by_key(|s| OrderedFloat(s.perimeter()))
+        || {
+            shapes
+                .par_iter()
+                .min_by_key(|s| OrderedFloat(s.perimeter()))
+        },
     );
 
     if let Some(largest) = largest {

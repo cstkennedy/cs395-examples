@@ -36,8 +36,7 @@ def generate_primes(to_generate):
 
     known_primes = [2, 3]
 
-    for next_prime in known_primes:
-        yield next_prime
+    yield from known_primes
 
     for _i in range(3, to_generate + 1):
         # prime from which to start calculations

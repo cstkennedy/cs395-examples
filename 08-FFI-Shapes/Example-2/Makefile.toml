@@ -32,7 +32,7 @@ args = [ "clean" ]
 [tasks.clean-lib]
 condition = { platforms = ["linux"] }
 command = "rm"
-args = [ "shapes_py/shapes_lib_py.so" ]
+args = [ "shapes_py/shapes_py.so" ]
 
 [tasks.test-python]
 dependencies = [ "build", "copy-lib" ]

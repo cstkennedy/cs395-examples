@@ -13,7 +13,7 @@ PROGRAM_HEADING = (
 )
 
 
-def __parse_args():
+def __parse_args() -> int:
     """
     Parse command line arguments (num_primes). Default to 10.
     """
@@ -27,7 +27,7 @@ def __parse_args():
     return num_primes
 
 
-def main():
+def main() -> None:
     """
     The main function. In practice I could name this
     anything. The name main was selected purely

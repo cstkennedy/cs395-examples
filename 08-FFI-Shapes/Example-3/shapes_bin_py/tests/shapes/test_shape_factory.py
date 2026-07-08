@@ -4,7 +4,7 @@ import pytest
 from hamcrest import *
 
 from shapes.shape import Shape
-from shapes_lib_py import ShapeFactory
+from shapes_py import ShapeFactory
 
 """
 **This is technically a set of Integration Tests**

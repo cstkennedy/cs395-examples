@@ -3,9 +3,10 @@ from __future__ import annotations
 from itertools import takewhile
 import math
 import numpy as np
+import numpy.typing as npt
 
 
-def __can_be_divided_by_any(known_primes: np.array, next_prime: int) -> bool:
+def __can_be_divided_by_any(known_primes: npt.NDArray[np.int64], next_prime: int) -> bool:
     """
     Iterate over all known primes and check the next_prime.
 
