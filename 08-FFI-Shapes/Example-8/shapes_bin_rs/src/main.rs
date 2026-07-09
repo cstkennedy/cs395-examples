@@ -9,7 +9,7 @@ use ordered_float::OrderedFloat;
 use rayon::prelude::*;
 
 use shapes::prelude::Parser as ShapeParser;
-use shapes::prelude::{Factory, Shape};
+use shapes::prelude::Shape;
 
 use shapes::factory::FactoryDirectory;
 use shapes::monoshape::MonoFactory;
@@ -121,7 +121,6 @@ fn main() -> eyre::Result<()> {
     let locked_stdout = stdout().lock();
     let buffered_stdout = BufWriter::new(locked_stdout);
     print_shape_names(buffered_stdout, shapes.iter())?;
-
 
     let (largest, smallest) = rayon::join(
         || shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())),

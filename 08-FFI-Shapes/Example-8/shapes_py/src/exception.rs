@@ -1,10 +1,8 @@
-
+use pyo3::exceptions::PyException;
 use pyo3::prelude::PyErr;
 use pyo3::prelude::*;
-use pyo3::exceptions::PyException;
 
 use crate::error::ShapeConversionError;
-
 
 #[pyclass(extends = PyException, subclass, name="ShapeConversionError")]
 pub struct PyShapeConversionError {
@@ -19,11 +17,8 @@ pub struct PyShapeConversionError {
 impl PyShapeConversionError {
     #[new]
     fn new(requested: String, actual: String) -> Self {
-        Self {
-            requested, actual
-        }
+        Self { requested, actual }
     }
-
 
     fn __str__(&self) -> String {
         format!("Cannot convert '{}' into '{}'", self.actual, self.requested)
@@ -33,7 +28,7 @@ impl PyShapeConversionError {
 impl From<ShapeConversionError> for PyErr {
     fn from(src: ShapeConversionError) -> Self {
         match src {
-            ShapeConversionError::TypeMismatchError{ requested, actual } => {
+            ShapeConversionError::TypeMismatchError { requested, actual } => {
                 PyErr::new::<PyShapeConversionError, _>((requested.to_string(), actual.to_string()))
             }
         }

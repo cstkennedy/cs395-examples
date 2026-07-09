@@ -13,7 +13,6 @@ use shapes::monoshape::MonoShape;
 use crate::error::ShapeCreationError;
 use crate::factory::{ShapeFactory, ShapeWrapper};
 
-
 impl FromStr for ShapeWrapper {
     type Err = ShapeCreationError;
 
@@ -24,7 +23,6 @@ impl FromStr for ShapeWrapper {
         Ok(wrapped)
     }
 }
-
 
 #[pyclass]
 pub struct ShapeParser;
@@ -59,4 +57,3 @@ impl ShapeParser {
         Ok(shapes)
     }
 }
-

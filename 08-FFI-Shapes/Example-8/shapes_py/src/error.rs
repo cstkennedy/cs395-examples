@@ -35,7 +35,7 @@ impl From<shapes::error::CreationError> for ShapeCreationError {
             }
             shapes::error::CreationError::ParseFloatError(msg) => {
                 ShapeCreationError::ParseFloatError(msg.to_string())
-            },
+            }
         }
     }
 }
@@ -57,10 +57,11 @@ impl From<ShapeCreationError> for PyErr {
     }
 }
 
-
 #[derive(Error, Debug)]
 pub enum ShapeConversionError {
     #[error("Cannot convert '{actual}' into '{requested}'")]
-    TypeMismatchError{ requested: &'static str, actual: &'static str }
+    TypeMismatchError {
+        requested: &'static str,
+        actual: &'static str,
+    },
 }
-

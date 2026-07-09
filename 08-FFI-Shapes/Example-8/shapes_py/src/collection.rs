@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 
-use itertools::{Itertools};
+use itertools::{Itertools, MinMaxResult};
 use ordered_float::OrderedFloat;
 
 use pyo3::prelude::*;
 
-use crate::factory::{ShapeWrapper};
+use crate::factory::ShapeWrapper;
 use crate::parser::ShapeParser;
 
 #[pyclass(from_py_object)]
@@ -102,6 +102,28 @@ impl ShapeCollection {
             CompareBy::Perimeter => self.shapes.sort_by_key(|shp| OrderedFloat(shp.perimeter())),
             CompareBy::Area => self.shapes.sort_by_key(|shp| OrderedFloat(shp.area())),
         };
+    }
+
+    pub fn minmax(&self, attribute: CompareBy) -> PyResult<(ShapeWrapper, ShapeWrapper)> {
+        let minmax_result = match attribute {
+            CompareBy::Name => self.shapes.iter().minmax_by_key(|shp| shp.name()),
+            CompareBy::Perimeter => self
+                .shapes
+                .iter()
+                .minmax_by_key(|shp| OrderedFloat(shp.perimeter())),
+            CompareBy::Area => self
+                .shapes
+                .iter()
+                .minmax_by_key(|shp| OrderedFloat(shp.area())),
+        };
+
+        match minmax_result {
+            MinMaxResult::NoElements => Err(pyo3::exceptions::PyValueError::new_err(
+                "ShapeCollection is empty",
+            )),
+            MinMaxResult::OneElement(min_and_max) => Ok((min_and_max.clone(), min_and_max.clone())),
+            MinMaxResult::MinMax(smallest, largest) => Ok((smallest.clone(), largest.clone())),
+        }
     }
 
     pub fn __str__(&self) -> String {

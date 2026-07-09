@@ -10,19 +10,21 @@ use shapes::{
 };
 
 use crate::circle::CircleWrapper;
-use crate::error::{ShapeCreationError, ShapeConversionError};
+use crate::error::{ShapeConversionError, ShapeCreationError};
 use crate::square::SquareWrapper;
 use crate::triangle::{EquilateralTriangleWrapper, RightTriangleWrapper, TriangleWrapper};
 
 #[pyclass(name = "Shape")]
 #[derive(Clone)]
 pub struct ShapeWrapper {
-    wrapped: MonoShape
+    wrapped: MonoShape,
 }
 
 impl From<MonoShape> for ShapeWrapper {
     fn from(monomorphized: MonoShape) -> Self {
-        Self {wrapped: monomorphized }
+        Self {
+            wrapped: monomorphized,
+        }
     }
 }
 
@@ -31,8 +33,11 @@ impl TryFrom<ShapeWrapper> for Circle {
 
     fn try_from(shape_wrapper: ShapeWrapper) -> Result<Circle, Self::Error> {
         match shape_wrapper.wrapped {
-            MonoShape::Circle{inner} => Ok(inner),
-            _ => Err(ShapeConversionError::TypeMismatchError{ requested: "Circle", actual: shape_wrapper.wrapped.name() })
+            MonoShape::Circle { inner } => Ok(inner),
+            _ => Err(ShapeConversionError::TypeMismatchError {
+                requested: "Circle",
+                actual: shape_wrapper.wrapped.name(),
+            }),
         }
     }
 }
@@ -42,8 +47,11 @@ impl TryFrom<ShapeWrapper> for Square {
 
     fn try_from(shape_wrapper: ShapeWrapper) -> Result<Square, Self::Error> {
         match shape_wrapper.wrapped {
-            MonoShape::Square{inner} => Ok(inner),
-            _ => Err(ShapeConversionError::TypeMismatchError{ requested: "Square", actual: shape_wrapper.wrapped.name() })
+            MonoShape::Square { inner } => Ok(inner),
+            _ => Err(ShapeConversionError::TypeMismatchError {
+                requested: "Square",
+                actual: shape_wrapper.wrapped.name(),
+            }),
         }
     }
 }
@@ -53,8 +61,11 @@ impl TryFrom<ShapeWrapper> for Triangle {
 
     fn try_from(shape_wrapper: ShapeWrapper) -> Result<Triangle, Self::Error> {
         match shape_wrapper.wrapped {
-            MonoShape::Triangle{inner} => Ok(inner),
-            _ => Err(ShapeConversionError::TypeMismatchError{ requested: "Triangle", actual: shape_wrapper.wrapped.name() })
+            MonoShape::Triangle { inner } => Ok(inner),
+            _ => Err(ShapeConversionError::TypeMismatchError {
+                requested: "Triangle",
+                actual: shape_wrapper.wrapped.name(),
+            }),
         }
     }
 }
@@ -64,8 +75,11 @@ impl TryFrom<ShapeWrapper> for EquilateralTriangle {
 
     fn try_from(shape_wrapper: ShapeWrapper) -> Result<EquilateralTriangle, Self::Error> {
         match shape_wrapper.wrapped {
-            MonoShape::EquilateralTriangle{inner} => Ok(inner),
-            _ => Err(ShapeConversionError::TypeMismatchError{ requested: "EquilateralTriangle", actual: shape_wrapper.wrapped.name() })
+            MonoShape::EquilateralTriangle { inner } => Ok(inner),
+            _ => Err(ShapeConversionError::TypeMismatchError {
+                requested: "EquilateralTriangle",
+                actual: shape_wrapper.wrapped.name(),
+            }),
         }
     }
 }
@@ -75,8 +89,11 @@ impl TryFrom<ShapeWrapper> for RightTriangle {
 
     fn try_from(shape_wrapper: ShapeWrapper) -> Result<RightTriangle, Self::Error> {
         match shape_wrapper.wrapped {
-            MonoShape::RightTriangle{inner} => Ok(inner),
-            _ => Err(ShapeConversionError::TypeMismatchError{ requested: "RightTriangle", actual: shape_wrapper.wrapped.name() })
+            MonoShape::RightTriangle { inner } => Ok(inner),
+            _ => Err(ShapeConversionError::TypeMismatchError {
+                requested: "RightTriangle",
+                actual: shape_wrapper.wrapped.name(),
+            }),
         }
     }
 }
@@ -102,7 +119,11 @@ impl ShapeWrapper {
 
     #[deprecated]
     pub fn trigger_conversion_error(&self) -> Result<(), ShapeConversionError> {
-        Err(ShapeConversionError::TypeMismatchError{ requested: "Circle", actual: "Updawg" }.into())
+        Err(ShapeConversionError::TypeMismatchError {
+            requested: "Circle",
+            actual: "Updawg",
+        }
+        .into())
     }
 
     pub fn try_as_circle(&self) -> Result<CircleWrapper, ShapeConversionError> {
@@ -123,7 +144,9 @@ impl ShapeWrapper {
         Ok(inner_shape.into())
     }
 
-    pub fn try_as_equilateral_triangle(&self) -> Result<EquilateralTriangleWrapper, ShapeConversionError> {
+    pub fn try_as_equilateral_triangle(
+        &self,
+    ) -> Result<EquilateralTriangleWrapper, ShapeConversionError> {
         let inner_shape: EquilateralTriangle = self.clone().try_into()?;
 
         Ok(inner_shape.into())
