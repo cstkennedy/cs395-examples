@@ -114,13 +114,9 @@ fn main() -> eyre::Result<()> {
     let buffered_stdout = BufWriter::new(locked_stdout);
     print_shapes(buffered_stdout, shapes.iter())?;
 
-    println!("{}", *STAR_DIVIDER);
-    println!("{:^38}", "Display Shape Names");
-    println!("{}", *STAR_DIVIDER);
 
-    let locked_stdout = stdout().lock();
-    let buffered_stdout = BufWriter::new(locked_stdout);
-    print_shape_names(buffered_stdout, shapes.iter())?;
+
+
 
     let (largest, smallest) = rayon::join(
         || shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())),
@@ -147,6 +143,17 @@ fn main() -> eyre::Result<()> {
 
         println!("{}", smallest);
     }
+
+    let mut shapes = shapes;
+    shapes.sort_by(|lhs, rhs| lhs.name().cmp(&rhs.name()));
+
+    println!();
+    println!("{}", *STAR_DIVIDER);
+    println!("{:^38}", "Display Shape Names");
+    println!("{}", *STAR_DIVIDER);
+    let locked_stdout = stdout().lock();
+    let buffered_stdout = BufWriter::new(locked_stdout);
+    print_shape_names(buffered_stdout, shapes.iter())?;
 
     Ok(())
 }

@@ -2,11 +2,11 @@ use pyo3::prelude::*;
 
 pub mod circle;
 pub mod error;
+pub mod exception;
 pub mod factory;
+pub mod parser;
 pub mod square;
 pub mod triangle;
-pub mod parser;
-pub mod exception;
 
 use crate::circle::CircleWrapper;
 use crate::factory::{ShapeFactory, ShapeWrapper};

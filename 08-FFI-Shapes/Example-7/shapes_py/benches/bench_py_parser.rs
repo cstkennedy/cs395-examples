@@ -4,7 +4,7 @@ use divan::{Bencher, black_box};
 
 use shapes_py::parser::ShapeParser;
 
-const LINES: [&str; 5] =  [
+const LINES: [&str; 5] = [
     "Triangle; 1 2 3",
     "Right Triangle; 3 4",
     "Equilateral Triangle; 5",
@@ -12,10 +12,7 @@ const LINES: [&str; 5] =  [
     "Circle; 5",
 ];
 
-const ERROR_LINES: [&str; 2] = [
-    "1337 Haxor; 1 2 3",
-    "1337 Haxor; invalid input",
-];
+const ERROR_LINES: [&str; 2] = ["1337 Haxor; 1 2 3", "1337 Haxor; invalid input"];
 
 #[divan::bench(min_time = 1, args = LINES)]
 fn test_bench_parse_shape_line_ok(line: &str) {

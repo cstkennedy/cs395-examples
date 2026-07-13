@@ -43,7 +43,7 @@ def bench_create(benchmark, name):
     Create a known valid Shape
     """
 
-    benchmark(ShapeFactory.create, "Circle")
+    benchmark(ShapeFactory.create, name)
 
 
 def bench_create_invalid_name_1_lambda(benchmark):
