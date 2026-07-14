@@ -86,9 +86,9 @@ def main() -> None:
     with QuickAndDirtyTimer("Sort by Name") as timer:
         shapes.sort(CompareBy.Name)
 
-    with QuickAndDirtyTimer("Print Again") as timer:
+    with QuickAndDirtyTimer("Display Names") as timer:
         # Should really just be names
-        print(shapes)
+        print(shapes.to_name_string())
 
     with QuickAndDirtyTimer("Timer Overhead") as timer:
         with QuickAndDirtyTimer("Inner Test Timer") as _:

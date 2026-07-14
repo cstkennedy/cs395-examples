@@ -129,4 +129,9 @@ impl ShapeCollection {
     pub fn __str__(&self) -> String {
         self.shapes.iter().map(ShapeWrapper::__str__).join("\n\n")
     }
+
+    pub fn to_name_string(&self) -> String {
+        self.shapes.iter().map(ShapeWrapper::name).join("\n")
+    }
 }
+
