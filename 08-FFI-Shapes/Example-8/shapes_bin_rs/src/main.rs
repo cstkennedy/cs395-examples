@@ -7,6 +7,7 @@ use eyre::WrapErr;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 use rayon::prelude::*;
+use thousands::Separable;
 
 use shapes::prelude::Parser as ShapeParser;
 use shapes::prelude::Shape;
@@ -84,6 +85,7 @@ fn main() -> eyre::Result<()> {
     println!("{}", *PROGRAM_HEADING);
     println!("{}", *FACTORY_INFO);
 
+    let timer = std::time::Instant::now();
     let shapes = {
         let file = File::open(&cli.shapes_filename)
             .wrap_err_with(|| format!("Could not open '{}", cli.shapes_filename))?;
@@ -91,6 +93,7 @@ fn main() -> eyre::Result<()> {
         let ins = BufReader::new(file);
         ShapeParser::<MonoFactory>::read_shapes_with(ins)
     };
+    eprintln!("{:<20}: {:>16} ns", "Parsing", timer.elapsed().as_nanos().separate_with_commas());
 
     if shapes.len() == 0 {
         eyre::bail!("'{}' did not contain any valid shapes", cli.shapes_filename);
@@ -100,24 +103,13 @@ fn main() -> eyre::Result<()> {
     println!("{:^38}", "Display All Shapes");
     println!("{}", *STAR_DIVIDER);
 
-    /*
-    {
-        let locked_stdout = stdout().lock();
-        let mut buffered_stdout = BufWriter::new(locked_stdout);
-        for shp in shapes.iter() {
-            writeln!(buffered_stdout, "{}", shp)?;
-            writeln!(buffered_stdout)?;
-        }
-    }
-    */
+    let timer = std::time::Instant::now();
     let locked_stdout = stdout().lock();
     let buffered_stdout = BufWriter::new(locked_stdout);
     print_shapes(buffered_stdout, shapes.iter())?;
+    eprintln!("{:<20}: {:>16} ns", "Display Shapes", timer.elapsed().as_nanos().separate_with_commas());
 
-
-
-
-
+    let timer = std::time::Instant::now();
     let (largest, smallest) = rayon::join(
         || shapes.par_iter().max_by_key(|s| OrderedFloat(s.area())),
         || {
@@ -126,6 +118,7 @@ fn main() -> eyre::Result<()> {
                 .min_by_key(|s| OrderedFloat(s.perimeter()))
         },
     );
+    eprintln!("{:<20}: {:>16} ns", "Max Area & Min Perim", timer.elapsed().as_nanos().separate_with_commas());
 
     if let Some(largest) = largest {
         println!("{}", *STAR_DIVIDER);
@@ -144,16 +137,20 @@ fn main() -> eyre::Result<()> {
         println!("{}", smallest);
     }
 
+    let timer = std::time::Instant::now();
     let mut shapes = shapes;
     shapes.sort_by(|lhs, rhs| lhs.name().cmp(&rhs.name()));
+    eprintln!("{:<20}: {:>16} ns", "Sort by Name", timer.elapsed().as_nanos().separate_with_commas());
 
     println!();
     println!("{}", *STAR_DIVIDER);
     println!("{:^38}", "Display Shape Names");
     println!("{}", *STAR_DIVIDER);
+    let timer = std::time::Instant::now();
     let locked_stdout = stdout().lock();
     let buffered_stdout = BufWriter::new(locked_stdout);
     print_shape_names(buffered_stdout, shapes.iter())?;
+    eprintln!("{:<20}: {:>16} ns", "Print Names", timer.elapsed().as_nanos().separate_with_commas());
 
     Ok(())
 }

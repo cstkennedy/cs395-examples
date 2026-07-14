@@ -87,6 +87,7 @@ def main() -> None:
         shapes.sort(CompareBy.Name)
 
     with QuickAndDirtyTimer("Print Again") as timer:
+        # Should really just be names
         print(shapes)
 
     with QuickAndDirtyTimer("Timer Overhead") as timer:
@@ -95,7 +96,7 @@ def main() -> None:
 
 
 def set_up_logging(level: int = logging.WARN) -> None:
-    logger = logging.getLogger("shapes_lib_py")
+    logger = logging.getLogger("shapes_py")
     logger.setLevel(level)
 
     handler = logging.StreamHandler(sys.stderr)
