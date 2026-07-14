@@ -3,9 +3,10 @@ import sys
 from typing import Final, Generator, Optional, TextIO
 
 from headings import BorderHeading, MultiLineBorderHeading
+from quick_timer import QuickAndDirtyTimer
 from shapes.shape import Shape
 from shapes_py import ShapeFactory, ShapeParser
-from shapes_py.collection import ShapeCollection, CompareBy
+from shapes_py.collection import CompareBy, ShapeCollection
 
 PROGRAM_HEADING = MultiLineBorderHeading(
     content=(
@@ -47,7 +48,8 @@ def main() -> None:
     print(PROGRAM_HEADING)
     print(FACTORY_DESCRIPTION)
 
-    shapes = ShapeCollection.read_from_file(shapes_filename)
+    with QuickAndDirtyTimer("Parsing") as timer:
+        shapes = ShapeCollection.read_from_file(shapes_filename)
 
     if not shapes:
         raise RuntimeError(f"{shapes_filename!r} did not contain any valid shapes")
@@ -59,27 +61,37 @@ def main() -> None:
         print(shp)
         print()
     """
-    print(shapes)
-    print()
+    with QuickAndDirtyTimer("Display Shapes") as timer:
+        print(shapes)
+        print()
 
     print(BorderHeading("Display Largest Shape (Area)"))
     #  largest_shape = max(shapes, key=lambda shape: shape.area())
-    largest_shape = shapes.max(CompareBy.Area)
+    with QuickAndDirtyTimer("Max Area") as timer:
+        largest_shape = shapes.max(CompareBy.Area)
     print(largest_shape)
     print()
 
     print(BorderHeading("Display Smallest Shape (Perimeter)"))
     #  smallest_shape = min(shapes, key=lambda shape: shape.perimeter())
-    smallest_shape = shapes.min(CompareBy.Perimeter)
+    with QuickAndDirtyTimer("Min Perimeter") as timer:
+        smallest_shape = shapes.min(CompareBy.Perimeter)
     print(smallest_shape)
     print()
 
     print(BorderHeading("Display Shapes Sorted by Name"))
     #  for shp in sorted(shapes, key=lambda shape: shape.name):
-        #  print(shp)
-        #  print()
-    shapes.sort(CompareBy.Name)
-    print(shapes)
+    #  print(shp)
+    #  print()
+    with QuickAndDirtyTimer("Sort by Name") as timer:
+        shapes.sort(CompareBy.Name)
+
+    with QuickAndDirtyTimer("Print Again") as timer:
+        print(shapes)
+
+    with QuickAndDirtyTimer("Timer Overhead") as timer:
+        with QuickAndDirtyTimer("Inner Test Timer") as _:
+            pass
 
 
 def set_up_logging(level: int = logging.WARN) -> None:
