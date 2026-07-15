@@ -1,7 +1,8 @@
-from _typeshed import Incomplete
 from collections.abc import Sequence
 from os import PathLike
 from typing import Any, Final, final
+
+from _typeshed import Incomplete
 
 @final
 class Circle:
@@ -78,35 +79,39 @@ class ShapeFactory:
     def create(name: str) -> Shape:
         """
         Create a Shape
-        
+
         # Arguments
-        
+
           * `name` shape to be created
         """
+
     @staticmethod
     def create_with(name: str, dims: Sequence[float]) -> Shape:
         """
         Create a Shape with specified dimensions.
-        
+
         # Arguments
-        
+
           * `name` shape to be created
           * `dims` input dimensions
         """
+
     @staticmethod
     def is_known(name: str) -> bool:
         """
         Determine whether a given shape is known
-        
+
         # Arguments
-        
+
          * `name` the shape for which to query
         """
+
     @staticmethod
     def list_known() -> str:
         """
         List the known shapes, one per line
         """
+
     @staticmethod
     def number_known() -> int: ...
 
@@ -115,7 +120,7 @@ class ShapeParser:
     @staticmethod
     def read_shape(line: str) -> Shape: ...
     @staticmethod
-    def read_shapes(file_path: str |PathLike[str]) -> list[Shape]: ...
+    def read_shapes(file_path: str | PathLike[str]) -> list[Shape]: ...
 
 @final
 class Square:

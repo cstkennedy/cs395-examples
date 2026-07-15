@@ -48,7 +48,7 @@ def main() -> None:
     print(PROGRAM_HEADING)
     print(FACTORY_DESCRIPTION)
 
-    with QuickAndDirtyTimer("Parsing") as timer:
+    with QuickAndDirtyTimer("Parsing") as _timer:
         shapes = ShapeCollection.read_from_file(shapes_filename)
 
     if not shapes:
@@ -61,20 +61,20 @@ def main() -> None:
         print(shp)
         print()
     """
-    with QuickAndDirtyTimer("Display Shapes") as timer:
+    with QuickAndDirtyTimer("Display Shapes") as _timer:
         print(shapes)
         print()
 
     print(BorderHeading("Display Largest Shape (Area)"))
     #  largest_shape = max(shapes, key=lambda shape: shape.area())
-    with QuickAndDirtyTimer("Max Area") as timer:
+    with QuickAndDirtyTimer("Max Area") as _timer:
         largest_shape = shapes.max(CompareBy.Area)
     print(largest_shape)
     print()
 
     print(BorderHeading("Display Smallest Shape (Perimeter)"))
     #  smallest_shape = min(shapes, key=lambda shape: shape.perimeter())
-    with QuickAndDirtyTimer("Min Perimeter") as timer:
+    with QuickAndDirtyTimer("Min Perimeter") as _timer:
         smallest_shape = shapes.min(CompareBy.Perimeter)
     print(smallest_shape)
     print()
@@ -83,14 +83,14 @@ def main() -> None:
     #  for shp in sorted(shapes, key=lambda shape: shape.name):
     #  print(shp)
     #  print()
-    with QuickAndDirtyTimer("Sort by Name") as timer:
+    with QuickAndDirtyTimer("Sort by Name") as _timer:
         shapes.sort(CompareBy.Name)
 
-    with QuickAndDirtyTimer("Display Names") as timer:
+    with QuickAndDirtyTimer("Display Names") as _timer:
         # Should really just be names
         print(shapes.to_name_string())
 
-    with QuickAndDirtyTimer("Timer Overhead") as timer:
+    with QuickAndDirtyTimer("Timer Overhead") as _timer:
         with QuickAndDirtyTimer("Inner Test Timer") as _:
             pass
 
@@ -108,7 +108,7 @@ def set_up_logging(level: int = logging.WARN) -> None:
 
 if __name__ == "__main__":
     try:
-        set_up_logging(level=logging.INFO)
+        set_up_logging(level=logging.ERROR)
         main()
     except FileNotFoundError as err:
         print(err)
