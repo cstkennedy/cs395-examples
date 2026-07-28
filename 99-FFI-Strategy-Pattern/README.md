@@ -20,3 +20,4 @@
 
   - <https://pyo3.rs/main/doc/pyo3/types/trait.pyanymethods>
   - <https://pyo3.rs/main/doc/pyo3/macro.intern>
+  - <https://pyo3.rs/main/doc/pyo3/struct.py>

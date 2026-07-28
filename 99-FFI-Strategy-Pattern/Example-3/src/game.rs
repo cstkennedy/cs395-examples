@@ -38,6 +38,13 @@ impl Game<Player1NotSet, Player2NotSet, NotReady> {
         Game::default()
     }
 
+    // TODO: Move to PyGame
+    pub fn new_with_players<'game>(player_1: Player<'game>, player_2: Player<'game>) -> Game<Player<'game>, Player<'game>, InProgress> {
+        Game::new()
+            .add_player(player_1)
+            .add_player(player_2)
+    }
+
     pub fn add_player(self, player: Player<'_>) -> Game<Player<'_>, Player2NotSet, NotReady> {
         Game {
             player_1: player,
