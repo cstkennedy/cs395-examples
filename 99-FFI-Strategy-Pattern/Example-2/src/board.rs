@@ -71,6 +71,7 @@ impl std::ops::Index<Position> for Board {
     }
 }
 
+// Needs to be removed (invariants)
 impl std::ops::IndexMut<Position> for Board {
     fn index_mut(&mut self, index: Position) -> &mut Self::Output {
         &mut self.the_board[*index - 1]

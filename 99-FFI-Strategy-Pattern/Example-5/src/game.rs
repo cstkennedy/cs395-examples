@@ -20,58 +20,42 @@ pub struct Player1NotSet;
 pub struct Player2NotSet;
 
 #[derive(Clone, Debug, Default)]
-pub struct NotReady;
-
-#[derive(Clone, Debug, Default)]
-pub struct InProgress;
-
-// TODO: Remove third generic since Player state encodes the same state information.
-#[derive(Clone, Debug, Default)]
-pub struct Game<P1, P2, S> {
+pub struct Game<P1, P2> {
     player_1: P1,
     player_2: P2,
     board: Board,
-    state: S,
 }
 
-impl Game<Player1NotSet, Player2NotSet, NotReady> {
+impl Game<Player1NotSet, Player2NotSet> {
     pub fn new() -> Self {
         Game::default()
     }
 
     // TODO: Move to PyGame
-    pub fn new_with_players<'game>(
-        player_1: Player<'game>,
-        player_2: Player<'game>,
-    ) -> Game<Player<'game>, Player<'game>, InProgress> {
+    pub fn new_with_players(player_1: Player, player_2: Player) -> Game<Player, Player> {
         Game::new().add_player(player_1).add_player(player_2)
     }
 
-    pub fn add_player(self, player: Player<'_>) -> Game<Player<'_>, Player2NotSet, NotReady> {
+    pub fn add_player(self, player: Player) -> Game<Player, Player2NotSet> {
         Game {
             player_1: player,
             player_2: self.player_2,
             board: self.board,
-            state: self.state,
         }
     }
 }
 
-impl<'game> Game<Player<'game>, Player2NotSet, NotReady> {
-    pub fn add_player(
-        self,
-        player: Player<'game>,
-    ) -> Game<Player<'game>, Player<'game>, InProgress> {
+impl Game<Player, Player2NotSet> {
+    pub fn add_player(self, player: Player) -> Game<Player, Player> {
         Game {
             player_1: self.player_1,
             player_2: player,
             board: self.board,
-            state: InProgress,
         }
     }
 }
 
-impl<'game> Game<Player<'game>, Player<'game>, InProgress> {
+impl Game<Player, Player> {
     fn do_one_turn(board: &mut Board, player: &mut Player, symbol: Symbol) -> TurnResult {
         loop {
             match player.next_move() {
@@ -92,7 +76,7 @@ impl<'game> Game<Player<'game>, Player<'game>, InProgress> {
         Referee::determine_turn_result(&board)
     }
 
-    pub fn play_match(mut self) -> CompletedGame<'game> {
+    pub fn play_match(mut self) -> CompletedGame {
         loop {
             let players = vec![
                 (&mut self.player_1, Symbol::X),
@@ -144,35 +128,26 @@ impl<'game> Game<Player<'game>, Player<'game>, InProgress> {
     }
 }
 
-impl GameIsOver for Game<Player<'_>, Player<'_>, InProgress> {
+impl GameIsOver for Game<Player, Player> {
     fn is_over(&self) -> bool {
         false
     }
 }
 
 #[derive(Debug)]
-pub enum CompletedGame<'game> {
-    Win {
-        winner: Player<'game>,
-        loser: Player<'game>,
-    },
-    Stalemate {
-        player_1: Player<'game>,
-        player_2: Player<'game>,
-    },
-    Forfeit {
-        winner: Player<'game>,
-        loser: Player<'game>,
-    },
+pub enum CompletedGame {
+    Win { winner: Player, loser: Player },
+    Stalemate { player_1: Player, player_2: Player },
+    Forfeit { winner: Player, loser: Player },
 }
 
-impl GameIsOver for CompletedGame<'_> {
+impl GameIsOver for CompletedGame {
     fn is_over(&self) -> bool {
         true
     }
 }
 
-impl<'game> fmt::Display for CompletedGame<'game> {
+impl fmt::Display for CompletedGame {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Self::Win { ref winner, .. } => {

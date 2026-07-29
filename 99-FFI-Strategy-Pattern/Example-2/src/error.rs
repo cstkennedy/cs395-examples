@@ -15,6 +15,7 @@ pub enum PositionError {
 
 #[derive(Debug, Error, PartialEq)]
 pub enum StrategyCreationError {
+    #[deprecated]
     #[error("{0}")]
     PositionError(#[from] PositionError),
 
@@ -29,10 +30,13 @@ pub enum StrategyCreationError {
 pub enum StrategyError {
     #[error("{:?}", .0)]
     ParseError(#[from] std::num::ParseIntError),
+
     #[error("{:?}", .0)]
     BoardError(#[from] BoardError),
+
     #[error("{:?}", .0)]
     MoveError(#[from] PositionError),
+
     #[error("{:?}", .0)]
     OutOfMovesError(String),
 }
