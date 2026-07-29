@@ -18,7 +18,8 @@ def main() -> None:
             #  strategy=PredefinedMoves(moves=[5, 1, 3, 7, 9, 2, 4, 6, 8]),
         #  ),
     #  ).play_match()
-    game = game.new_with_hardcoded_players()
+    game = Game.new_with_hardcoded_players().play_match()
+
 
     print(game)
 

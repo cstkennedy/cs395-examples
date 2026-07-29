@@ -16,15 +16,18 @@ pub mod prelude {
 
 use crate::player::Player;
 use crate::game::{Game, CompletedGame};
+use crate::strategy::*;
 
 #[pyclass(name="Game")]
 pub struct PyGame {
-    game: Game<Player, Player>
+    // game: Game<Player, Player>
+    game: Option<Game<Player, Player>>
 }
 
 impl From<Game<Player, Player>> for PyGame {
     fn from(game: Game<Player, Player>) -> Self {
-        PyGame { game }
+        // PyGame { game }
+        PyGame { game: Some(game) }
     }
 }
 
@@ -32,6 +35,7 @@ impl From<Game<Player, Player>> for PyGame {
 impl PyGame {
     /*
     #[rustfmt::skip]
+    #[staticmethod]
     pub fn new_with_players(player_1: Player, player_2: Player) -> PyGame {
         Game::new()
             .add_player(player_1)
@@ -42,6 +46,7 @@ impl PyGame {
 
     #[deprecated]
     #[rustfmt::skip]
+    #[staticmethod]
     pub fn new_with_hardcoded_players() -> PyGame {
         Game::new()
             .add_player(
@@ -61,8 +66,14 @@ impl PyGame {
         .into()
     }
 
-    pub fn play_match(&self) -> String {
-        self.game.clone().play_match().to_string()
+    // pub fn play_match(self) -> String {
+    pub fn play_match(&mut self) -> String {
+        // self.game.play_match().to_string()
+
+        let game = self.game.take().unwrap();
+        let completed_game = game.play_match();
+
+        completed_game.to_string()
     }
 
 }
