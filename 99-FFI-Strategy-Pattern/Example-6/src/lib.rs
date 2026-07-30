@@ -67,17 +67,42 @@ impl PyGame {
     }
 
     // pub fn play_match(self) -> String {
-    pub fn play_match(&mut self) -> String {
+    // pub fn play_match(&mut self) -> String {
+    pub fn play_match(&mut self) -> PyCompletedGame {
         // self.game.play_match().to_string()
 
         let game = self.game.take().unwrap();
         let completed_game = game.play_match();
 
-        completed_game.to_string()
+        // completed_game.to_string()
+        completed_game.into()
     }
 
 }
 
+#[pyclass(name="CompletedGame")]
+pub struct PyCompletedGame {
+    // game: Game<Player, Player>
+    game: CompletedGame
+}
+
+impl From<CompletedGame> for PyCompletedGame {
+    fn from(game: CompletedGame) -> Self {
+        // PyGame { game }
+        PyCompletedGame { game }
+    }
+}
+
+#[pymethods]
+impl PyCompletedGame {
+    pub fn __repr__(&self) -> String {
+        format!("{:?}", self.game)
+    }
+
+    pub fn __str__(&self) -> String {
+        format!("{:}", self.game)
+    }
+}
 
 #[pymodule]
 mod tictactoe {
@@ -85,6 +110,9 @@ mod tictactoe {
 
     #[pymodule_export]
     use PyGame;
+
+    #[pymodule_export]
+    use PyCompletedGame;
 
 
     #[pymodule]
