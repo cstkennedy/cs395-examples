@@ -16,6 +16,7 @@
  - `PyBoard` - readonly
  - Eliminate/replace `'a` and `'game` lifetimes where reasonable alternatives
    exist
+ - Debug output for Python `__repr__` (new trait? `PyDunderRepr`?)
 
 
 # Notes
