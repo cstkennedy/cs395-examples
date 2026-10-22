@@ -1,8 +1,8 @@
 use crate::board::Position;
 use crate::error::StrategyError;
 
-use crate::strategy::{KeyboardStrategy, PredefinedMoves, Strategy};
 use crate::py_strategy::PyStrategy;
+use crate::strategy::{KeyboardStrategy, PredefinedMoves, Strategy};
 
 #[derive(Debug)]
 pub enum MonoStrategy {

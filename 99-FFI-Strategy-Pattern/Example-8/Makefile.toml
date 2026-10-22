@@ -36,7 +36,6 @@ args = [ "./tictactoe.so" ]
 
 [tasks.run-python]
 dependencies = [ "build", "copy-lib" ]
-cwd = "./shapes_bin_py"
-command = "${PYTHON}"
-args = ["run_shapes.py", "${@}"]
+command = "uv"
+args = ["run", "play_tictactoe.py", "${@}"]
 

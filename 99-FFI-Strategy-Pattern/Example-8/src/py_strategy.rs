@@ -10,6 +10,7 @@ pub struct PyStrategy {
 }
 
 impl Strategy for PyStrategy {
+    /*
     fn next_move(&mut self) -> Result<Position, StrategyError> {
         Python::attach(|py| {
             let obj = self.wrapped.bind(py);
@@ -24,6 +25,23 @@ impl Strategy for PyStrategy {
             let raw_move = raw_move.extract::<usize>().unwrap();
 
             Ok(raw_move.try_into()?)
+        })
+    }
+    */
+    fn next_move(&mut self) -> Result<Position, StrategyError> {
+        Python::attach(|py| {
+            let obj = self.wrapped.bind(py);
+
+            match obj.call_method0(pyo3::intern!(py, "next_move")) {
+                Ok(raw_move) => {
+                    let raw_move = raw_move.extract::<usize>()?;
+                    Ok(raw_move.try_into()?)
+                }
+                Err(the_err) => {
+                    // Method does not exist?
+                    Err(StrategyError::OutOfMovesError(the_err.to_string()))
+                }
+            }
         })
     }
 }
