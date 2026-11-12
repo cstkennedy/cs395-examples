@@ -1,13 +1,15 @@
 use eyre::WrapErr;
+use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
-use shapes::prelude::Factory;
 use shapes::prelude::Parser as ShapeParser;
+use shapes::prelude::{Factory, Shape};
+
+use shapes::factory::FactoryDirectory;
 
 use std::cell::LazyCell;
 use std::fs::File;
 use std::io::BufReader;
-use std::vec::Vec;
 
 use clap::Parser;
 
@@ -39,7 +41,6 @@ const FACTORY_INFO: LazyCell<String> = LazyCell::new(|| {
         "".to_owned(),
     ]
     .into_iter()
-    .collect::<Vec<String>>()
     .join("\n")
 });
 
@@ -87,7 +88,7 @@ fn main() -> eyre::Result<()> {
             .wrap_err_with(|| format!("Could not open '{}", cli.shapes_filename))?;
 
         let ins = BufReader::new(file);
-        ShapeParser::read_shapes_with(ins)
+        ShapeParser::<Factory>::read_shapes_with(ins)
     };
 
     if shapes.len() == 0 {

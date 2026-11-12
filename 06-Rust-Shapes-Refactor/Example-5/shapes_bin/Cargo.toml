@@ -10,3 +10,4 @@ eyre = "0.6.12"
 clap = { version = "4.5.29", features = ["derive"] }
 
 shapes = { path = "../shapes" }
+rayon = "1.12.0"

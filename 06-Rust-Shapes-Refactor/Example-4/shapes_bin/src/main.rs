@@ -6,6 +6,7 @@ use shapes::prelude::Parser as ShapeParser;
 use shapes::prelude::{Factory, Shape};
 
 use shapes::factory::FactoryDirectory;
+use shapes::monoshape::MonoFactory;
 
 use std::cell::LazyCell;
 use std::fs::File;
@@ -35,9 +36,9 @@ const FACTORY_INFO: LazyCell<String> = LazyCell::new(|| {
         STAR_DIVIDER.clone(),
         format!("{:^38}", "Available Shapes"),
         STAR_DIVIDER.clone(),
-        Factory::list_known().to_string(),
+        MonoFactory::list_known().to_string(),
         STAR_DIVIDER.clone(),
-        format!("{:>2} shapes available.", Factory::number_known()),
+        format!("{:>2} shapes available.", MonoFactory::number_known()),
         "".to_owned(),
     ]
     .into_iter()
@@ -88,7 +89,7 @@ fn main() -> eyre::Result<()> {
             .wrap_err_with(|| format!("Could not open '{}", cli.shapes_filename))?;
 
         let ins = BufReader::new(file);
-        ShapeParser::<Factory>::read_shapes_with(ins)
+        ShapeParser::<MonoFactory>::read_shapes_with(ins)
     };
 
     if shapes.len() == 0 {
